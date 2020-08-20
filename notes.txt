@@ -1,0 +1,4 @@
+	myAPIkey  c2e489273fdc0df57969e7049a9a37b0
+
+
+api.openweathermap.org/data/2.5/weather?q=London&appid=c2e489273fdc0df57969e7049a9a37b0
