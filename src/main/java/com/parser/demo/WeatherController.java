@@ -19,14 +19,14 @@ public class WeatherController {
 
     @GetMapping("/weather")
     @ResponseBody
-    public WeatherDto getForecast(@RequestParam("q") String city, @RequestParam("appid") String appId) {
+    public void getForecast(@RequestParam("q") String city, @RequestParam("appid") String appId) {
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
         HttpEntity<String> entity = new HttpEntity<String>(headers);
         String input = String.format("http://api.openweathermap.org/data/2.5/weather?q=%s&appid=%s", city, appId);
         WeatherDto weatherDto = restTemplate.exchange(input, HttpMethod.GET, entity, WeatherDto.class).getBody();
-        WeatherDto save = service.save(weatherDto);
-        return save;
+       service.save(weatherDto);
+
     }
 
     @GetMapping("/weather16days")
@@ -41,10 +41,10 @@ public class WeatherController {
 
     }
 //http://localhost:8080/weather?town=Milan
-    @PutMapping
-    public void updatePopulation(@PathVariable("town") String city) {
-       service.select(city);
-    }
+//    @PutMapping
+//    public void updatePopulation(@PathVariable("town") String city) {
+//       service.select(city);
+//    }
 }
 //Working url
 //api.openweathermap.org/data/2.5/weather?q=London&appid=c2e489273fdc0df57969e7049a9a37b0

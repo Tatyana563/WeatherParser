@@ -9,6 +9,5 @@ public class WeatherServiceImpl implements WeatherService{
     private WeatherRepository weatherRepository;
     @Override
     public void save(WeatherDto weatherDto) {
-        weatherRepository.save(weatherDto);
-    }
-}
+      weatherRepository.save(weatherDto);
+    }}

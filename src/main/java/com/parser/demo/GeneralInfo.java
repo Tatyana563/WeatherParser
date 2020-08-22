@@ -2,10 +2,8 @@ package com.parser.demo;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+
 @Entity
 public class GeneralInfo {
     @Id
@@ -18,5 +16,6 @@ public class GeneralInfo {
     @JsonProperty
     private String sunset;
 
-
+//@OneToOne
+//    WeatherDto weatherDto;
 }
