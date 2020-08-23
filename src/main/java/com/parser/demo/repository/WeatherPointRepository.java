@@ -1,11 +1,11 @@
-package com.parser.demo;
+package com.parser.demo.repository;
 
+import com.parser.demo.entity.WeatherPoint;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface WeatherRepository extends JpaRepository<WeatherDto, Integer> {
+public interface WeatherPointRepository extends JpaRepository<WeatherPoint, Integer> {
 
 //
 

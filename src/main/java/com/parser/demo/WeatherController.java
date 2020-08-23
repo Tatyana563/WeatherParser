@@ -1,5 +1,6 @@
 package com.parser.demo;
 
+import com.parser.demo.dto.WeatherResponseDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -24,7 +25,7 @@ public class WeatherController {
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
         HttpEntity<String> entity = new HttpEntity<String>(headers);
         String input = String.format("http://api.openweathermap.org/data/2.5/weather?q=%s&appid=%s", city, appId);
-        WeatherDto weatherDto = restTemplate.exchange(input, HttpMethod.GET, entity, WeatherDto.class).getBody();
+        WeatherResponseDto weatherDto = restTemplate.exchange(input, HttpMethod.GET, entity, WeatherResponseDto.class).getBody();
        service.save(weatherDto);
 
     }
@@ -36,7 +37,7 @@ public class WeatherController {
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
         HttpEntity<String> entity = new HttpEntity<String>(headers);
         String input = String.format("http://api.openweathermap.org/data/2.5/forecast/daily?q=%s&cnt=%s&appid=%s", city, days, appId);
-        WeatherDto weatherDto = restTemplate.exchange(input, HttpMethod.GET, entity, WeatherDto.class).getBody();
+        WeatherResponseDto weatherDto = restTemplate.exchange(input, HttpMethod.GET, entity, WeatherResponseDto.class).getBody();
         service.save(weatherDto);
 
     }
