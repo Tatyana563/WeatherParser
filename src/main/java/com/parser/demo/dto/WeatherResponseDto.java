@@ -1,14 +1,44 @@
 package com.parser.demo.dto;
 
 import java.util.List;
+import java.util.Set;
 
 public class WeatherResponseDto {
     private int id;
     private String name;
     private CoordinatesDto coord;
-    private List<WeatherDto> weather;
+    private Set<WeatherDto> weather;
     private MainDto main;
     private SysDto sys;
+    private CloudDto clouds;
+    private WindDto wind;
+    private RainDto rain;
+    private int timezone;
+    private long dt;
+
+    public CloudDto getClouds() {
+        return clouds;
+    }
+
+    public void setClouds(CloudDto clouds) {
+        this.clouds = clouds;
+    }
+
+    public WindDto getWind() {
+        return wind;
+    }
+
+    public void setWind(WindDto wind) {
+        this.wind = wind;
+    }
+
+    public RainDto getRain() {
+        return rain;
+    }
+
+    public void setRain(RainDto rain) {
+        this.rain = rain;
+    }
 
     public int getId() {
         return id;
@@ -34,11 +64,11 @@ public class WeatherResponseDto {
         this.coord = coord;
     }
 
-    public List<WeatherDto> getWeather() {
+    public Set<WeatherDto> getWeather() {
         return weather;
     }
 
-    public void setWeather(List<WeatherDto> weather) {
+    public void setWeather(Set<WeatherDto> weather) {
         this.weather = weather;
     }
 
@@ -56,5 +86,21 @@ public class WeatherResponseDto {
 
     public void setSys(SysDto sys) {
         this.sys = sys;
+    }
+
+    public int getTimezone() {
+        return timezone;
+    }
+
+    public void setTimezone(int timezone) {
+        this.timezone = timezone;
+    }
+
+    public long getDt() {
+        return dt;
+    }
+
+    public void setDt(long dt) {
+        this.dt = dt;
     }
 }

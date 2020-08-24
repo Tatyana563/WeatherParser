@@ -35,27 +35,34 @@ public class WeatherServiceImpl implements WeatherService {
     public void save(WeatherResponseDto weatherDto) {
         WeatherPoint point = new WeatherPoint();
         int id = weatherDto.getId();
+        WeatherPoint byDate = weatherPointRepository.findByDate(weatherDto.getDt());
+        boolean equalDate = byDate.getDate() == weatherDto.getDt();
 
-        City city = cityRepository.findById(id).orElseGet(() -> {
-            City newCity = new City();
-            newCity.setId(id);
-            newCity.setName(weatherDto.getName());
-            CoordinatesDto coord = weatherDto.getCoord();
-            newCity.setCoordinates(new Coordinates(coord.getLon(), coord.getLat()));
-            newCity.setCountry(weatherDto.getSys().getCountry());
 
-            return cityRepository.save(newCity);
-        });
+        if (!equalDate) {
+            City city = cityRepository.findById(id).orElseGet(() -> {
+                City newCity = new City();
+                newCity.setId(id);
+                newCity.setName(weatherDto.getName());
+                CoordinatesDto coord = weatherDto.getCoord();
+                newCity.setCoordinates(new Coordinates(coord.getLon(), coord.getLat()));
+                newCity.setCountry(weatherDto.getSys().getCountry());
 
-        for (WeatherDto condition : weatherDto.getWeather()) {
-            WeatherCondition weatherCondition = weatherConditionRepository
-                    .findById(condition.getId())
-                    .orElseGet(() -> {
-                        WeatherCondition newCondition = new WeatherCondition();
+                return cityRepository.save(newCity);
+            });
 
-                        return weatherConditionRepository.save(newCondition);
-                    });
-        }
+            for (WeatherDto condition : weatherDto.getWeather()) {
+                WeatherCondition weatherCondition = weatherConditionRepository
+                        .findById(condition.getId())
+                        .orElseGet(() -> {
+                            WeatherCondition newCondition = new WeatherCondition();
+                            newCondition.setDescription(condition.getDescription());
+                            newCondition.setMain(condition.getMain());
+                            newCondition.setIcon(condition.getIcon());
+
+                            return weatherConditionRepository.save(newCondition);
+                        });
+            }
 //        DailyInfo dailyInfo = dailyInfoRepository.findById(weatherDto.getId()).get();
 //
 //        if (dailyInfo == null) {
@@ -66,30 +73,30 @@ public class WeatherServiceImpl implements WeatherService {
 //            newDailyInfo.setTimezone(weatherDto.getTimezone());
 //            dailyInfo = newDailyInfo;
 //        }
-        DailyInfo dailyInfo = dailyInfoRepository.findById(id).orElseGet(() -> {
-            DailyInfo newDailyInfo = new DailyInfo();
-            newDailyInfo.setId(id);
-            newDailyInfo.setSunrise(weatherDto.getSys().getSunrise());
-            newDailyInfo.setSunset(weatherDto.getSys().getSunset());
-            newDailyInfo.setTimezone(weatherDto.getTimezone());
-            return dailyInfoRepository.save(newDailyInfo);
-        });
+            DailyInfo dailyInfo = dailyInfoRepository.findById(id).orElseGet(() -> {
+                DailyInfo newDailyInfo = new DailyInfo();
+                newDailyInfo.setId(id);
+                newDailyInfo.setSunrise(weatherDto.getSys().getSunrise());
+                newDailyInfo.setSunset(weatherDto.getSys().getSunset());
+                newDailyInfo.setTimezone(weatherDto.getTimezone());
+                return dailyInfoRepository.save(newDailyInfo);
+            });
 
-        CloudInfo cloudInfo = cloudInfoRepository.findById(id).orElseGet(() -> {
-            CloudInfo newCloudInfo = new CloudInfo();
-            newCloudInfo.setId(id);
-            newCloudInfo.setPercentageOfClouds(weatherDto.getClouds().getAll());
-            return cloudInfoRepository.save(newCloudInfo);
-        });
+            CloudInfo cloudInfo = cloudInfoRepository.findById(id).orElseGet(() -> {
+                CloudInfo newCloudInfo = new CloudInfo();
+                newCloudInfo.setId(id);
+                newCloudInfo.setPercentageOfClouds(weatherDto.getClouds().getAll());
+                return cloudInfoRepository.save(newCloudInfo);
+            });
 
-        MainInfo mainInfo = mainInfoRepository.findById(id).orElseGet(() -> {
-            MainInfo newMainInfo = new MainInfo();
-            newMainInfo.setId(id);
-            newMainInfo.setHumidity(weatherDto.getMain().getHumidity());
-            newMainInfo.setPressure(weatherDto.getMain().getPressure());
-            newMainInfo.setTemp(weatherDto.getMain().getTemp());
-            return mainInfoRepository.save(newMainInfo);
-        });
+            MainInfo mainInfo = mainInfoRepository.findById(id).orElseGet(() -> {
+                MainInfo newMainInfo = new MainInfo();
+                newMainInfo.setId(id);
+                newMainInfo.setHumidity(weatherDto.getMain().getHumidity());
+                newMainInfo.setPressure(weatherDto.getMain().getPressure());
+                newMainInfo.setTemp(weatherDto.getMain().getTemp());
+                return mainInfoRepository.save(newMainInfo);
+            });
 
 //        RainInfo rainInfo = rainInfoRepository.findById(id).orElseGet(() -> {
 //            RainInfo newRainInfo = new RainInfo();
@@ -101,22 +108,23 @@ public class WeatherServiceImpl implements WeatherService {
 //            return rainInfoRepository.save(newRainInfo);
 //        });
 
-        WindInfo windInfo = windInfoRepository.findById(id).orElseGet(() -> {
-            WindInfo newWindInfo = new WindInfo();
-            newWindInfo.setGust(weatherDto.getWind().getGust());
-            newWindInfo.setSpeed(weatherDto.getWind().getSpeed());
-            newWindInfo.setId(id);
-            return windInfoRepository.save(newWindInfo);
-        });
+            WindInfo windInfo = windInfoRepository.findById(id).orElseGet(() -> {
+                WindInfo newWindInfo = new WindInfo();
+                newWindInfo.setGust(weatherDto.getWind().getGust());
+                newWindInfo.setSpeed(weatherDto.getWind().getSpeed());
+                newWindInfo.setId(id);
+                return windInfoRepository.save(newWindInfo);
+            });
 
-        point.setCity(city);
-        // point.setConditions();
-        point.setDailyInfo(dailyInfo);
-        point.setCloudInfo(cloudInfo);
-        point.setMainInfo(mainInfo);
-        //  point.setRainInfo(rainInfo);
-        point.setWindInfo(windInfo);
-        weatherPointRepository.save(point);
+            point.setCity(city);
+            //  point.setConditions();
+            point.setDailyInfo(dailyInfo);
+            point.setCloudInfo(cloudInfo);
+            point.setMainInfo(mainInfo);
+            //  point.setRainInfo(rainInfo);
+            point.setWindInfo(windInfo);
+            point.setDate(weatherDto.getDt());
+            weatherPointRepository.save(point);
 //        //Меняется раз в сутки. Следует проверить наличие существующей записи
 //        point.setDailyInfo();
 //        //Каждый раз своя дата. Изначально необходимо выполнить поиск в бд по этой дате
@@ -126,5 +134,6 @@ public class WeatherServiceImpl implements WeatherService {
 //        point.setMainInfo();
 
 
+        }
     }
 }

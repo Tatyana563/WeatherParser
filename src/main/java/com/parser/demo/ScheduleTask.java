@@ -26,7 +26,7 @@ public class ScheduleTask {
     @Value("${weather.api.app-id}")
     private String appId;
 
-    @Scheduled(fixedRate = 5000)
+    @Scheduled(fixedRate = 30000)
     public void getWeather(){
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));

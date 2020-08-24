@@ -10,7 +10,7 @@ public class WeatherPoint {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    private Instant date;
+    private long date;
 
     @OneToMany
     @JoinTable
@@ -22,9 +22,18 @@ public class WeatherPoint {
     @ManyToOne
     private DailyInfo dailyInfo;
 
-//OneToOne +rAIN, WIND, CLOUDS
+
     @ManyToOne
     private City city;
+
+    @OneToOne
+    private RainInfo rainInfo;
+
+    @OneToOne
+    private WindInfo windInfo;
+
+    @OneToOne
+    private CloudInfo cloudInfo;
 
     public int getId() {
         return id;
@@ -34,11 +43,12 @@ public class WeatherPoint {
         this.id = id;
     }
 
-    public Instant getDate() {
+
+    public long getDate() {
         return date;
     }
 
-    public void setDate(Instant date) {
+    public void setDate(long date) {
         this.date = date;
     }
 
@@ -72,5 +82,29 @@ public class WeatherPoint {
 
     public void setCity(City city) {
         this.city = city;
+    }
+
+    public RainInfo getRainInfo() {
+        return rainInfo;
+    }
+
+    public void setRainInfo(RainInfo rainInfo) {
+        this.rainInfo = rainInfo;
+    }
+
+    public WindInfo getWindInfo() {
+        return windInfo;
+    }
+
+    public void setWindInfo(WindInfo windInfo) {
+        this.windInfo = windInfo;
+    }
+
+    public CloudInfo getCloudInfo() {
+        return cloudInfo;
+    }
+
+    public void setCloudInfo(CloudInfo cloudInfo) {
+        this.cloudInfo = cloudInfo;
     }
 }

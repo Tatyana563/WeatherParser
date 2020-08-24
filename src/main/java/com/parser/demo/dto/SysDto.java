@@ -1,23 +1,25 @@
 package com.parser.demo.dto;
 
+import java.time.Instant;
+
 public class SysDto {
-    private String sunrise;
-    private String sunset;
+    private Instant sunrise;
+    private Instant sunset;
     private String country;
 
-    public String getSunrise() {
+    public Instant getSunrise() {
         return sunrise;
     }
 
-    public void setSunrise(String sunrise) {
+    public void setSunrise(Instant sunrise) {
         this.sunrise = sunrise;
     }
 
-    public String getSunset() {
+    public Instant getSunset() {
         return sunset;
     }
 
-    public void setSunset(String sunset) {
+    public void setSunset(Instant sunset) {
         this.sunset = sunset;
     }
 

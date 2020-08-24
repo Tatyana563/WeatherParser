@@ -6,12 +6,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-public class WindInfo {
+public class CloudInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private double speed;
-    private double gust;
+
+    private double percentageOfClouds;
 
     public int getId() {
         return id;
@@ -21,22 +21,11 @@ public class WindInfo {
         this.id = id;
     }
 
-    public double getSpeed() {
-        return speed;
+    public double getPercentageOfClouds() {
+        return percentageOfClouds;
     }
 
-    public void setSpeed(double speed) {
-        this.speed = speed;
-    }
-
-    public double getGust() {
-        return gust;
-    }
-
-    public void setGust(double gust) {
-        this.gust = gust;
+    public void setPercentageOfClouds(double percentageOfClouds) {
+        this.percentageOfClouds = percentageOfClouds;
     }
 }
-
-
-
