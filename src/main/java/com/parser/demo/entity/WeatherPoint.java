@@ -10,13 +10,13 @@ public class WeatherPoint {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    private long date;
+    private Long date;
 
     @OneToMany
     @JoinTable
     private Set<WeatherCondition> conditions;//no List for Hibernate
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private MainInfo mainInfo;
 
     @ManyToOne
@@ -26,13 +26,13 @@ public class WeatherPoint {
     @ManyToOne
     private City city;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private RainInfo rainInfo;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private WindInfo windInfo;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private CloudInfo cloudInfo;
 
     public int getId() {

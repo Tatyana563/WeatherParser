@@ -14,7 +14,7 @@ public class WeatherResponseDto {
     private WindDto wind;
     private RainDto rain;
     private int timezone;
-    private long dt;
+    private Long dt;
 
     public CloudDto getClouds() {
         return clouds;
@@ -96,11 +96,11 @@ public class WeatherResponseDto {
         this.timezone = timezone;
     }
 
-    public long getDt() {
+    public Long getDt() {
         return dt;
     }
 
-    public void setDt(long dt) {
+    public void setDt(Long dt) {
         this.dt = dt;
     }
 }

@@ -1,6 +1,7 @@
 package com.parser.demo;
 
 import com.parser.demo.dto.CoordinatesDto;
+import com.parser.demo.dto.RainDto;
 import com.parser.demo.dto.WeatherDto;
 import com.parser.demo.dto.WeatherResponseDto;
 import com.parser.demo.entity.*;
@@ -8,6 +9,14 @@ import com.parser.demo.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.time.Instant;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class WeatherServiceImpl implements WeatherService {
@@ -30,19 +39,21 @@ public class WeatherServiceImpl implements WeatherService {
     @Autowired
     private WindInfoRepository windInfoRepository;
 
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
     @Override
     @Transactional
     public void save(WeatherResponseDto weatherDto) {
-        WeatherPoint point = new WeatherPoint();
-        int id = weatherDto.getId();
-        WeatherPoint byDate = weatherPointRepository.findByDate(weatherDto.getDt());
-        boolean equalDate = byDate.getDate() == weatherDto.getDt();
+        int cityId = weatherDto.getId();
+        WeatherPoint byDate = weatherPointRepository.findByDateAndCity_Id(weatherDto.getDt(), cityId);
 
-
-        if (!equalDate) {
-            City city = cityRepository.findById(id).orElseGet(() -> {
+        if (byDate == null) {
+            WeatherPoint point = new WeatherPoint();
+            City city = cityRepository.findById(cityId).orElseGet(() -> {
                 City newCity = new City();
-                newCity.setId(id);
+                newCity.setId(cityId);
                 newCity.setName(weatherDto.getName());
                 CoordinatesDto coord = weatherDto.getCoord();
                 newCity.setCoordinates(new Coordinates(coord.getLon(), coord.getLat()));
@@ -51,77 +62,70 @@ public class WeatherServiceImpl implements WeatherService {
                 return cityRepository.save(newCity);
             });
 
+            Set<WeatherCondition> weatherConditionSet = new HashSet<>();
             for (WeatherDto condition : weatherDto.getWeather()) {
                 WeatherCondition weatherCondition = weatherConditionRepository
                         .findById(condition.getId())
                         .orElseGet(() -> {
                             WeatherCondition newCondition = new WeatherCondition();
+                            newCondition.setId(condition.getId());
                             newCondition.setDescription(condition.getDescription());
                             newCondition.setMain(condition.getMain());
                             newCondition.setIcon(condition.getIcon());
 
                             return weatherConditionRepository.save(newCondition);
+
                         });
+                weatherConditionSet.add(weatherCondition);
             }
-//        DailyInfo dailyInfo = dailyInfoRepository.findById(weatherDto.getId()).get();
-//
-//        if (dailyInfo == null) {
-//            DailyInfo newDailyInfo = new DailyInfo();
-//            newDailyInfo.setId(id);
-//            newDailyInfo.setSunrise(weatherDto.getSys().getSunrise());
-//            newDailyInfo.setSunset(weatherDto.getSys().getSunset());
-//            newDailyInfo.setTimezone(weatherDto.getTimezone());
-//            dailyInfo = newDailyInfo;
-//        }
-            DailyInfo dailyInfo = dailyInfoRepository.findById(id).orElseGet(() -> {
+
+            Instant sunrise = weatherDto.getSys().getSunrise();
+            Instant sunset = weatherDto.getSys().getSunset();
+            int timezone = weatherDto.getTimezone();
+
+            Optional<DailyInfo> bySunriseAndSunsetAndTimezone = dailyInfoRepository.findBySunriseAndSunsetAndTimezone(sunrise, sunset, timezone);
+
+            DailyInfo dailyInfo;
+            if (bySunriseAndSunsetAndTimezone.isEmpty()) {
                 DailyInfo newDailyInfo = new DailyInfo();
-                newDailyInfo.setId(id);
                 newDailyInfo.setSunrise(weatherDto.getSys().getSunrise());
                 newDailyInfo.setSunset(weatherDto.getSys().getSunset());
                 newDailyInfo.setTimezone(weatherDto.getTimezone());
-                return dailyInfoRepository.save(newDailyInfo);
-            });
 
-            CloudInfo cloudInfo = cloudInfoRepository.findById(id).orElseGet(() -> {
-                CloudInfo newCloudInfo = new CloudInfo();
-                newCloudInfo.setId(id);
-                newCloudInfo.setPercentageOfClouds(weatherDto.getClouds().getAll());
-                return cloudInfoRepository.save(newCloudInfo);
-            });
+                dailyInfo = dailyInfoRepository.save(newDailyInfo);
+            } else {
+                dailyInfo = bySunriseAndSunsetAndTimezone.get();
+            }
 
-            MainInfo mainInfo = mainInfoRepository.findById(id).orElseGet(() -> {
-                MainInfo newMainInfo = new MainInfo();
-                newMainInfo.setId(id);
-                newMainInfo.setHumidity(weatherDto.getMain().getHumidity());
-                newMainInfo.setPressure(weatherDto.getMain().getPressure());
-                newMainInfo.setTemp(weatherDto.getMain().getTemp());
-                return mainInfoRepository.save(newMainInfo);
-            });
+            //Проверить на нулл
+            CloudInfo cloudInfo = new CloudInfo();
+            cloudInfo.setPercentageOfClouds(weatherDto.getClouds().getAll());
 
-//        RainInfo rainInfo = rainInfoRepository.findById(id).orElseGet(() -> {
-//            RainInfo newRainInfo = new RainInfo();
-//            newRainInfo.setId(id);
-//            String oneHour = weatherDto.getRain().getOneHour();
-//            String threeHours = weatherDto.getRain().getThreeHours();
-//            newRainInfo.setOneHour((oneHour==null ? "null": oneHour));
-//            newRainInfo.setThreeHours(threeHours==null ? "null":threeHours);
-//            return rainInfoRepository.save(newRainInfo);
-//        });
+            MainInfo mainInfo = new MainInfo();
+            mainInfo.setHumidity(weatherDto.getMain().getHumidity());
+            mainInfo.setPressure(weatherDto.getMain().getPressure());
+            mainInfo.setTemp(weatherDto.getMain().getTemp());
 
-            WindInfo windInfo = windInfoRepository.findById(id).orElseGet(() -> {
-                WindInfo newWindInfo = new WindInfo();
-                newWindInfo.setGust(weatherDto.getWind().getGust());
-                newWindInfo.setSpeed(weatherDto.getWind().getSpeed());
-                newWindInfo.setId(id);
-                return windInfoRepository.save(newWindInfo);
-            });
+            RainInfo rainInfo = null;
+            RainDto rain = weatherDto.getRain();
+            if (rain != null) {
+                rainInfo = new RainInfo();
+                rainInfo.setOneHour(rain.getOneHour());
+                rainInfo.setThreeHours(rain.getThreeHours());
+            }
+
+            //Проверить на нулл
+            WindInfo windInfo = new WindInfo();
+            windInfo.setGust(weatherDto.getWind().getGust());
+            windInfo.setSpeed(weatherDto.getWind().getSpeed());
+
 
             point.setCity(city);
-            //  point.setConditions();
+            point.setConditions(weatherConditionSet);
             point.setDailyInfo(dailyInfo);
             point.setCloudInfo(cloudInfo);
             point.setMainInfo(mainInfo);
-            //  point.setRainInfo(rainInfo);
+            point.setRainInfo(rainInfo);
             point.setWindInfo(windInfo);
             point.setDate(weatherDto.getDt());
             weatherPointRepository.save(point);
@@ -132,8 +136,16 @@ public class WeatherServiceImpl implements WeatherService {
 //        point.setDate();
 //        //Каждый раз новые данные, сохраняем как новые
 //        point.setMainInfo();
-
-
+        } else {
+            System.out.println("Current weather for "
+                    + weatherDto.getName() + " at "
+                    + new Date(weatherDto.getDt()) + " has already been found");
         }
+    }
+
+
+    @Override
+    public void executeQuery1() {
+        entityManager.createQuery("").executeUpdate();
     }
 }
