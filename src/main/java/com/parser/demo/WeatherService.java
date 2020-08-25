@@ -1,12 +1,11 @@
 package com.parser.demo;
 
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
+import com.parser.demo.dto.WeatherResponseDto;
 import org.springframework.stereotype.Service;
 
 @Service
 public interface WeatherService {
-    WeatherDto save(WeatherDto weatherDto);
+    void save(WeatherResponseDto weatherDto);
 
-    WeatherDto select (String city);
+    void executeQuery1();
 }
