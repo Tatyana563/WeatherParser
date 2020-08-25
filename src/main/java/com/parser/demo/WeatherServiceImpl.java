@@ -1,16 +1,19 @@
 package com.parser.demo;
 
+import com.parser.ConnectionFactory;
 import com.parser.demo.dto.*;
 import com.parser.demo.entity.*;
 import com.parser.demo.repository.*;
-import org.hibernate.dialect.function.StandardAnsiSqlAggregationFunctions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.Instant;
 import java.util.Date;
 import java.util.HashSet;
@@ -144,16 +147,36 @@ public class WeatherServiceImpl implements WeatherService {
 
     @Override
     public AvgTempResponse avgTempInCityBetweenTwoDates(String cityName, String startDate, String finalDate) {
-        Query query = entityManager.createNativeQuery(" SELECT AVG(main_info.temp), city.name " +
+        String q = " SELECT AVG(main_info.temp) as average, city.name " +
                 " FROM main_info" +
                 " INNER JOIN weather_point ON main_info.id = weather_point.main_info_id " +
                 " INNER JOIN city ON weather_point.city_id = city.id " +
-                "WHERE city.name= ? AND weather_point.date >= ? and weather_point.date <= ? ");
-        query.setParameter(1, cityName);
-        query.setParameter(2, startDate);
-        query.setParameter(3, finalDate);
-        int i = query.executeUpdate();
-        return new AvgTempResponse();
+                "WHERE city.name= ? AND weather_point.date >= ? and weather_point.date <= ? ";
+//        Query query = entityManager.createNativeQuery(" SELECT AVG(main_info.temp), city.name " +
+//                " FROM main_info" +
+//                " INNER JOIN weather_point ON main_info.id = weather_point.main_info_id " +
+//                " INNER JOIN city ON weather_point.city_id = city.id " +
+//                "WHERE city.name= ? AND weather_point.date >= ? and weather_point.date <= ? ");
+//        query.setParameter(1, cityName);
+//        query.setParameter(2, startDate);
+//        query.setParameter(3, finalDate);
+
+        Connection connection = ConnectionFactory.getConnection();
+        AvgTempResponse avgTempResponse = null;
+        try (PreparedStatement statement = connection.prepareStatement(q)) {
+            statement.setString(1, cityName);
+            statement.setString(2,startDate);
+            statement.setString(3,finalDate);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                Double avgTemp = resultSet.getDouble("average");
+                String name = resultSet.getString("name");
+                avgTempResponse = new AvgTempResponse(avgTemp, name);
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return avgTempResponse;
     }
 
 

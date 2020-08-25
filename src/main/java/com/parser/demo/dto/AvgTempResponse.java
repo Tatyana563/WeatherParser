@@ -24,4 +24,12 @@ public class AvgTempResponse {
         this.avgTemp = avgTemp;
         this.city = city;
     }
+
+    @Override
+    public String toString() {
+        return "AvgTempResponse{" +
+                "avgTemp=" + avgTemp +
+                ", city='" + city + '\'' +
+                '}';
+    }
 }

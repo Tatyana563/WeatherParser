@@ -34,7 +34,9 @@ public class WeatherController {
     @GetMapping("/weather/findTopTemp")
     @ResponseBody
     public AvgTempResponse getForecast(@RequestParam("q") String city, @RequestParam("start") String startDate, @RequestParam("finish") String finishDate) {
-     return service.avgTempInCityBetweenTwoDates(city, startDate, finishDate);
+        AvgTempResponse avgTempResponse = service.avgTempInCityBetweenTwoDates(city, startDate, finishDate);
+        System.out.println(avgTempResponse);
+        return service.avgTempInCityBetweenTwoDates(city, startDate, finishDate);
 
 
     }
