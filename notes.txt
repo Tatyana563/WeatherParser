@@ -2,3 +2,34 @@
 
 
 api.openweathermap.org/data/2.5/weather?q=London&appid=c2e489273fdc0df57969e7049a9a37b0
+
+1) Average temperature in the city between 2 dates
+SELECT AVG(main_info.temp)
+FROM main_info
+         INNER JOIN weather_point ON main_info.id = weather_point.main_info_id
+         INNER JOIN city ON weather_point.city_id = city.id
+WHERE city.name='Milan' AND weather_point.date >= '2020-08-25' and weather_point.date <= '2020-08-26';
+
+2) Find cities with descriprion "Clouds" for last 30 min
+SELECT city.name, weather_condition.description, weather_point.date
+FROM city
+         INNER JOIN weather_point on city.id = weather_point.city_id
+         INNER JOIN weather_point_conditions on weather_point_conditions.weather_point_id = weather_point.id
+         INNER JOIN weather_condition on weather_point_conditions.weather_point_id = weather_condition.id
+WHERE weather_condition.main = 'Clouds' AND  weather_point.date > (now() - interval 200 minute);
+
+3) General Amount of precipitations for one city for 24 hours
+
+SELECT city.name,  SUM(rain_info.one_hour)
+FROM weather_point
+INNER JOIN city on city.id=weather_point.city_id
+INNER JOIN rain_info on rain_info.id=weather_point.rain_info_id
+WHERE city.name='London' AND weather_point.date > (now() - interval 24 hour);
+
+4) Select top-3 cities with the highest temperature
+SELECT (main_info.temp), city.name
+FROM main_info
+         INNER JOIN weather_point ON main_info.id = weather_point.main_info_id
+         INNER JOIN city ON weather_point.city_id = city.id
+WHERE weather_point.date >= '2020-08-25' and weather_point.date <= '2020-08-26'
+ORDER BY main_info.temp DESC LIMIT 3;

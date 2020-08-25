@@ -1,5 +1,6 @@
 package com.parser.demo.dto;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Set;
 
@@ -14,7 +15,7 @@ public class WeatherResponseDto {
     private WindDto wind;
     private RainDto rain;
     private int timezone;
-    private Long dt;
+    private Instant dt;
 
     public CloudDto getClouds() {
         return clouds;
@@ -96,11 +97,11 @@ public class WeatherResponseDto {
         this.timezone = timezone;
     }
 
-    public Long getDt() {
+    public Instant getDt() {
         return dt;
     }
 
-    public void setDt(Long dt) {
+    public void setDt(Instant dt) {
         this.dt = dt;
     }
 }

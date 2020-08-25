@@ -10,7 +10,7 @@ public class WeatherPoint {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    private Long date;
+    private Instant date;
 
     @OneToMany
     @JoinTable
@@ -44,11 +44,11 @@ public class WeatherPoint {
     }
 
 
-    public long getDate() {
+    public Instant getDate() {
         return date;
     }
 
-    public void setDate(long date) {
+    public void setDate(Instant date) {
         this.date = date;
     }
 

@@ -1,5 +1,6 @@
 package com.parser.demo;
 
+import com.parser.demo.dto.AvgTempResponse;
 import com.parser.demo.dto.WeatherResponseDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -29,16 +30,12 @@ public class WeatherController {
        service.save(weatherDto);
 
     }
-
-    @GetMapping("/weather16days")
+//http://localhost:8080//weather/findTopTemp?q=London&start=2020-08-25&finish=2020-08-26
+    @GetMapping("/weather/findTopTemp")
     @ResponseBody
-    public void getForecastFor16Days(@RequestParam("q") String city, @RequestParam("appid") String appId, @RequestParam("cnt") String days) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-        HttpEntity<String> entity = new HttpEntity<String>(headers);
-        String input = String.format("http://api.openweathermap.org/data/2.5/forecast/daily?q=%s&cnt=%s&appid=%s", city, days, appId);
-        WeatherResponseDto weatherDto = restTemplate.exchange(input, HttpMethod.GET, entity, WeatherResponseDto.class).getBody();
-        service.save(weatherDto);
+    public AvgTempResponse getForecast(@RequestParam("q") String city, @RequestParam("start") String startDate, @RequestParam("finish") String finishDate) {
+     return service.avgTempInCityBetweenTwoDates(city, startDate, finishDate);
+
 
     }
 //http://localhost:8080/weather?town=Milan

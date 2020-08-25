@@ -7,5 +7,5 @@ import org.springframework.stereotype.Service;
 public interface WeatherService {
     void save(WeatherResponseDto weatherDto);
 
-    void executeQuery1();
+    void avgTempInCityBetweenTwoDates(String cityName, String startDate, String finalDate);
 }

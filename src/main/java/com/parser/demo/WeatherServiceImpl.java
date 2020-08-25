@@ -1,17 +1,16 @@
 package com.parser.demo;
 
-import com.parser.demo.dto.CoordinatesDto;
-import com.parser.demo.dto.RainDto;
-import com.parser.demo.dto.WeatherDto;
-import com.parser.demo.dto.WeatherResponseDto;
+import com.parser.demo.dto.*;
 import com.parser.demo.entity.*;
 import com.parser.demo.repository.*;
+import org.hibernate.dialect.function.StandardAnsiSqlAggregationFunctions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import java.time.Instant;
 import java.util.Date;
 import java.util.HashSet;
@@ -139,13 +138,23 @@ public class WeatherServiceImpl implements WeatherService {
         } else {
             System.out.println("Current weather for "
                     + weatherDto.getName() + " at "
-                    + new Date(weatherDto.getDt()) + " has already been found");
+                    + new Date(String.valueOf(weatherDto.getDt())) + " has already been found");
         }
     }
 
-
     @Override
-    public void executeQuery1() {
-        entityManager.createQuery("").executeUpdate();
+    public AvgTempResponse avgTempInCityBetweenTwoDates(String cityName, String startDate, String finalDate) {
+        Query query = entityManager.createNativeQuery(" SELECT AVG(main_info.temp), city.name " +
+                " FROM main_info" +
+                " INNER JOIN weather_point ON main_info.id = weather_point.main_info_id " +
+                " INNER JOIN city ON weather_point.city_id = city.id " +
+                "WHERE city.name= ? AND weather_point.date >= ? and weather_point.date <= ? ");
+        query.setParameter(1, cityName);
+        query.setParameter(2, startDate);
+        query.setParameter(3, finalDate);
+        int i = query.executeUpdate();
+        return new AvgTempResponse();
     }
+
+
 }

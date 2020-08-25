@@ -7,13 +7,15 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.Instant;
+
 @Repository
 public interface WeatherPointRepository extends JpaRepository<WeatherPoint, Integer> {
 
     @Query("from WeatherPoint as wp where wp.date=:data")
     WeatherPoint findByDate(@Param("data") Long date);
 
-    WeatherPoint findByDateAndCity_Id(Long date, int cityId);
+    WeatherPoint findByDateAndCity_Id(Instant date, int cityId);
 
 
 //    WeatherPoint findByDate(Long date);
