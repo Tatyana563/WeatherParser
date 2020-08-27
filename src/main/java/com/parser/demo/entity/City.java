@@ -8,6 +8,8 @@ public class City {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+//    private int remoteId;
+
     private String name;
 
     private String country;

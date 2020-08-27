@@ -30,9 +30,10 @@ public class WeatherController {
        service.save(weatherDto);
 
     }
-//http://localhost:8080//weather/findTopTemp?q=London&start=2020-08-25&finish=2020-08-26
+//http://localhost:8080//weather/findTopTemp?q=London&start=2020-08-26&finish=2020-08-28
     @GetMapping("/weather/findTopTemp")
     @ResponseBody
+    //TODO: заменить String на Instant
     public AvgTempResponse getForecast(@RequestParam("q") String city, @RequestParam("start") String startDate, @RequestParam("finish") String finishDate) {
         AvgTempResponse avgTempResponse = service.avgTempInCityBetweenTwoDates(city, startDate, finishDate);
         System.out.println(avgTempResponse);
