@@ -23,4 +23,12 @@ public class RainDto {
     public void setThreeHours(String threeHours) {
         this.threeHours = threeHours;
     }
+
+    public RainDto(String oneHour, String threeHours) {
+        this.oneHour = oneHour;
+        this.threeHours = threeHours;
+    }
+
+    public RainDto() {
+    }
 }

@@ -98,27 +98,55 @@ public class WeatherServiceImpl implements WeatherService {
             }
 
             //Проверить на нулл
-            CloudInfo cloudInfo = new CloudInfo();
-            cloudInfo.setPercentageOfClouds(weatherDto.getClouds().getAll());
+            CloudInfo cloudInfo;
+            double cloudness = weatherDto.getClouds().getAll();
+            Optional<CloudInfo> byCloudPercentage = cloudInfoRepository.findBypercentageOfClouds(cloudness);
+            CloudInfo newCloudInfo = new CloudInfo();
+            if (byCloudPercentage.isEmpty()) {
+                newCloudInfo.setPercentageOfClouds(weatherDto.getClouds().getAll());
+                cloudInfo = cloudInfoRepository.save(newCloudInfo);
+            } else {
+                cloudInfo = byCloudPercentage.get();
+            }
 
-            MainInfo mainInfo = new MainInfo();
-            mainInfo.setHumidity(weatherDto.getMain().getHumidity());
-            mainInfo.setPressure(weatherDto.getMain().getPressure());
-            mainInfo.setTemp(weatherDto.getMain().getTemp());
+
+            MainInfo mainInfo;
+            Optional<MainInfo> byHumidityAndPressureAndTemp = mainInfoRepository.findByHumidityAndPressureAndTemp(weatherDto.getMain().getHumidity(), weatherDto.getMain().getPressure(), weatherDto.getMain().getTemp());
+            if (byHumidityAndPressureAndTemp.isEmpty()) {
+                MainInfo newMainInfo = new MainInfo();
+                newMainInfo.setHumidity(weatherDto.getMain().getHumidity());
+                newMainInfo.setPressure(weatherDto.getMain().getPressure());
+                newMainInfo.setTemp(weatherDto.getMain().getTemp());
+                mainInfo = mainInfoRepository.save(newMainInfo);
+            } else {
+                mainInfo = byHumidityAndPressureAndTemp.get();
+            }
 
             RainInfo rainInfo = null;
-            RainDto rain = weatherDto.getRain();
-            if (rain != null) {
-                rainInfo = new RainInfo();
-                rainInfo.setOneHour(rain.getOneHour());
-                rainInfo.setThreeHours(rain.getThreeHours());
+            Optional<RainDto> rain = Optional.ofNullable(weatherDto.getRain());
+            if (!rain.isEmpty()) {
+                Optional<RainInfo> rainFromDb = rainInfoRepository.findByOneHourAndThreeHours(weatherDto.getRain().getOneHour(), weatherDto.getRain().getThreeHours());
+                if (rainFromDb.isEmpty()) {
+                    RainInfo newRainInfo = new RainInfo();
+                    newRainInfo.setOneHour(weatherDto.getRain().getOneHour());
+                    newRainInfo.setThreeHours(weatherDto.getRain().getThreeHours());
+                    rainInfo = rainInfoRepository.save(newRainInfo);
+                } else {
+                    rainInfo = rainFromDb.get();
+                }
             }
 
             //Проверить на нулл
-            WindInfo windInfo = new WindInfo();
-            windInfo.setGust(weatherDto.getWind().getGust());
-            windInfo.setSpeed(weatherDto.getWind().getSpeed());
-
+            WindInfo windInfo;
+            Optional<WindInfo> byGustAndSpeed = windInfoRepository.findByGustAndSpeed(weatherDto.getWind().getGust(), weatherDto.getWind().getSpeed());
+            if (byGustAndSpeed.isEmpty()) {
+                WindInfo newWindInfo = new WindInfo();
+                newWindInfo.setGust(weatherDto.getWind().getGust());
+                newWindInfo.setSpeed(weatherDto.getWind().getSpeed());
+                windInfo = windInfoRepository.save(newWindInfo);
+            } else {
+                windInfo = byGustAndSpeed.get();
+            }
 
             point.setCity(city);
             point.setConditions(weatherConditionSet);
@@ -139,7 +167,7 @@ public class WeatherServiceImpl implements WeatherService {
         } else {
             System.out.println("Current weather for "
                     + weatherDto.getName() + " at "
-            + Date.from(Instant.parse(String.valueOf(weatherDto.getDt())))+
+                    + Date.from(Instant.parse(String.valueOf(weatherDto.getDt()))) +
                     " has already been saved in DB");
         }
     }
