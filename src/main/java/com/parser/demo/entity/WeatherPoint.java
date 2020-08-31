@@ -13,7 +13,8 @@ public class WeatherPoint {
     private Instant date;
 
     @OneToMany
-    @JoinTable
+    @JoinTable(joinColumns = @JoinColumn(name = "conditions_id"),
+    inverseJoinColumns = @JoinColumn(name = "weather_point_id"))
     private Set<WeatherCondition> conditions;//no List for Hibernate
 
     @OneToOne(cascade = CascadeType.ALL)

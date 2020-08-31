@@ -4,6 +4,9 @@ public class AvgTempResponse {
     private double avgTemp;
     private String city;
 
+    public AvgTempResponse() {
+    }
+
     public double getAvgTemp() {
         return avgTemp;
     }

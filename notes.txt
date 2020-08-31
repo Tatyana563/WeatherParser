@@ -11,7 +11,7 @@ FROM main_info
 WHERE city.name='Milan' AND weather_point.date >= '2020-08-25' and weather_point.date <= '2020-08-26';
 
 2) Find cities with descriprion "Clouds" for last 30 min
-SELECT city.name, weather_condition.description, weather_point.date
+SELECT DISTINCT (city.name), weather_condition.description, weather_point.date
 FROM city
          INNER JOIN weather_point on city.id = weather_point.city_id
          INNER JOIN weather_point_conditions on weather_point_conditions.weather_point_id = weather_point.id
