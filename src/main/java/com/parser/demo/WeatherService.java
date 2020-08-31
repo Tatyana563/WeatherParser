@@ -9,4 +9,6 @@ public interface WeatherService {
     void save(WeatherResponseDto weatherDto);
 
     AvgTempResponse avgTempInCityBetweenTwoDates(String cityName, String startDate, String finalDate);
+
+   // AvgTempResponse avgTempInCityBetweenTwoDatesFilter(String cityName, String startDate, String finalDate);
 }

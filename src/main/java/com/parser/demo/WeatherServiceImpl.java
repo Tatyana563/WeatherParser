@@ -4,6 +4,8 @@ import com.parser.ConnectionFactory;
 import com.parser.demo.dto.*;
 import com.parser.demo.entity.*;
 import com.parser.demo.repository.*;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -147,19 +149,11 @@ public class WeatherServiceImpl implements WeatherService {
 
     @Override
     public AvgTempResponse avgTempInCityBetweenTwoDates(String cityName, String startDate, String finalDate) {
-        String q = " SELECT AVG(main_info.temp) as average, city.name " +
+        String q = " SELECT AVG(main_info.temp) as average, " +
                 " FROM main_info" +
                 " INNER JOIN weather_point ON main_info.id = weather_point.main_info_id " +
                 " INNER JOIN city ON weather_point.city_id = city.id " +
                 "WHERE city.name= ? AND weather_point.date >= ? and weather_point.date <= ? ";
-//        Query query = entityManager.createNativeQuery(" SELECT AVG(main_info.temp), city.name " +
-//                " FROM main_info" +
-//                " INNER JOIN weather_point ON main_info.id = weather_point.main_info_id " +
-//                " INNER JOIN city ON weather_point.city_id = city.id " +
-//                "WHERE city.name= ? AND weather_point.date >= ? and weather_point.date <= ? ");
-//        query.setParameter(1, cityName);
-//        query.setParameter(2, startDate);
-//        query.setParameter(3, finalDate);
 
         Connection connection = ConnectionFactory.getConnection();
         AvgTempResponse avgTempResponse = null;
@@ -178,6 +172,14 @@ public class WeatherServiceImpl implements WeatherService {
         }
         return avgTempResponse;
     }
+
+//    @Override
+//    public AvgTempResponse avgTempInCityBetweenTwoDatesFilter(String cityName, String startDate, String finalDate) {
+//  final StringBuilder sql = new StringBuilder("select avg from AvgTempResponse avg FROM MainInfo INNER JOIN avg")
+//
+//
+//        return null;
+//    }
 
 
 }

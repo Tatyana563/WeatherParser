@@ -4,7 +4,7 @@
 api.openweathermap.org/data/2.5/weather?q=London&appid=c2e489273fdc0df57969e7049a9a37b0
 
 1) Average temperature in the city between 2 dates
-SELECT AVG(main_info.temp)
+SELECT AVG(main_info.temp), city.name
 FROM main_info
          INNER JOIN weather_point ON main_info.id = weather_point.main_info_id
          INNER JOIN city ON weather_point.city_id = city.id
@@ -33,3 +33,14 @@ FROM main_info
          INNER JOIN city ON weather_point.city_id = city.id
 WHERE weather_point.date >= '2020-08-25' and weather_point.date <= '2020-08-26'
 ORDER BY main_info.temp DESC LIMIT 3;
+
+5) Find city with max avg temp ("-" dont know how add city.name)
+SELECT MAX(avg_value)
+FROM (SELECT AVG(main_info.temp) avg_value FROM city, main_info
+                                                    INNER JOIN weather_point ON main_info.id = weather_point.main_info_id
+                                                    INNER JOIN city ON weather_point.city_id = city.id
+
+    GROUP BY city.name
+
+
+) as maxAvgTemp;

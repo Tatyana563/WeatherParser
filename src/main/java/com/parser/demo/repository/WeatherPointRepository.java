@@ -1,5 +1,6 @@
 package com.parser.demo.repository;
 
+import com.parser.demo.dto.AvgTempResponse;
 import com.parser.demo.entity.City;
 import com.parser.demo.entity.WeatherPoint;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,7 +18,8 @@ public interface WeatherPointRepository extends JpaRepository<WeatherPoint, Inte
 
     WeatherPoint findByDateAndCity_Id(Instant date, int cityId);
 
-
+//@Query("SELECT AVG(mi) FROM MainInfo as mi INNER JOIN WeatherPoint wp ON mi.id=wp.id")
+  //  AvgTempResponse findAvgTempByCity(@Param(""))
 //    WeatherPoint findByDate(Long date);
 //
 

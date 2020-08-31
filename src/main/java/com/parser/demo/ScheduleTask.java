@@ -21,7 +21,7 @@ public class ScheduleTask {
     @Autowired
     WeatherService service;
 
-    private String city="London";
+    private String city="Fort William";
 
     @Value("${weather.api.app-id}")
     private String appId;
