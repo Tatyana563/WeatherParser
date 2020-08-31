@@ -1,6 +1,5 @@
 package com.parser.demo;
 
-import com.parser.ConnectionFactory;
 import com.parser.demo.dto.*;
 import com.parser.demo.entity.*;
 import com.parser.demo.repository.*;
@@ -11,10 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
@@ -52,13 +47,13 @@ public class WeatherServiceImpl implements WeatherService {
     @Transactional
     public void save(WeatherResponseDto weatherDto) {
         int cityId = weatherDto.getId();
-        WeatherPoint byDate = weatherPointRepository.findByDateAndCity_Id(weatherDto.getDt(), cityId);
+        WeatherPoint byDate = weatherPointRepository.findByDateAndCity_remoteId(weatherDto.getDt(), cityId);
 
         if (byDate == null) {
             WeatherPoint point = new WeatherPoint();
-            City city = cityRepository.findById(cityId).orElseGet(() -> {
+            City city = cityRepository.findByRemoteId(cityId).orElseGet(() -> {
                 City newCity = new City();
-                newCity.setId(cityId);
+                newCity.setRemoteId(cityId);
                 newCity.setName(weatherDto.getName());
                 CoordinatesDto coord = weatherDto.getCoord();
                 newCity.setCoordinates(new Coordinates(coord.getLon(), coord.getLat()));
@@ -144,7 +139,8 @@ public class WeatherServiceImpl implements WeatherService {
         } else {
             System.out.println("Current weather for "
                     + weatherDto.getName() + " at "
-                    + new Date(String.valueOf(weatherDto.getDt())) + " has already been found");
+            + Date.from(Instant.parse(String.valueOf(weatherDto.getDt())))+
+                    " has already been saved in DB");
         }
     }
 

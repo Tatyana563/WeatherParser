@@ -8,7 +8,7 @@ public class City {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-//    private int remoteId;
+    private int remoteId;
 
     private String name;
 
@@ -49,4 +49,11 @@ public class City {
         this.coordinates = coordinates;
     }
 
+    public int getRemoteId() {
+        return remoteId;
+    }
+
+    public void setRemoteId(int remoteId) {
+        this.remoteId = remoteId;
+    }
 }

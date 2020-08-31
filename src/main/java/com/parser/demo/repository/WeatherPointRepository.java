@@ -16,7 +16,7 @@ public interface WeatherPointRepository extends JpaRepository<WeatherPoint, Inte
     @Query("from WeatherPoint as wp where wp.date=:data")
     WeatherPoint findByDate(@Param("data") Long date);
 
-    WeatherPoint findByDateAndCity_Id(Instant date, int cityId);
+    WeatherPoint findByDateAndCity_remoteId(Instant date, int cityId);
 
 //@Query("SELECT AVG(mi) FROM MainInfo as mi INNER JOIN WeatherPoint wp ON mi.id=wp.id")
   //  AvgTempResponse findAvgTempByCity(@Param(""))
