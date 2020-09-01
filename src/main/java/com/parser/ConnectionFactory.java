@@ -11,7 +11,7 @@ import java.util.Objects;
 //spring.datasource.password=apple25
 public class ConnectionFactory {
     private static final String URL = "jdbc:mysql://localhost:3306/weather?serverTimezone=UTC";
-    private static final String USERNMAME = "root";
+    private static final String USERNMAME = "tanya";
     private static final String PASSWORD = "apple25";
    // private static final String DRIVER_CLASS_NAME = "com.mysql.cj.jdbc.Driver.";
 

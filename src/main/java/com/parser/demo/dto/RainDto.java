@@ -4,15 +4,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class RainDto {
     @JsonProperty("1h")
-    private String oneHour;
+    private double oneHour;
     @JsonProperty("3h")
     private String threeHours;
 
-    public String getOneHour() {
+    public double getOneHour() {
         return oneHour;
     }
 
-    public void setOneHour(String oneHour) {
+    public void setOneHour(double oneHour) {
         this.oneHour = oneHour;
     }
 
@@ -24,7 +24,7 @@ public class RainDto {
         this.threeHours = threeHours;
     }
 
-    public RainDto(String oneHour, String threeHours) {
+    public RainDto(double oneHour, String threeHours) {
         this.oneHour = oneHour;
         this.threeHours = threeHours;
     }

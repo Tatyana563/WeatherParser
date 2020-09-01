@@ -12,7 +12,7 @@ public class RainInfo {
 @Id
 @GeneratedValue(strategy = GenerationType.IDENTITY)
 private int id;
-    private String oneHour;
+    private double oneHour;
     private String threeHours;
 
     public int getId() {
@@ -23,11 +23,11 @@ private int id;
         this.id = id;
     }
 
-    public String getOneHour() {
+    public double getOneHour() {
         return oneHour;
     }
 
-    public void setOneHour(String oneHour) {
+    public void setOneHour(double oneHour) {
         this.oneHour = oneHour;
     }
 

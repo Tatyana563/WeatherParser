@@ -1,14 +1,13 @@
 package com.parser.demo;
 
-import com.parser.demo.dto.AvgTempResponse;
-import com.parser.demo.dto.CoordinatesDto;
-import com.parser.demo.dto.WeatherDto;
-import com.parser.demo.dto.WeatherResponseDto;
+import com.parser.ConnectionFactory;
+import com.parser.demo.dto.*;
 import com.parser.demo.entity.*;
 import com.parser.demo.repository.CityRepository;
 import com.parser.demo.repository.DailyInfoRepository;
 import com.parser.demo.repository.WeatherConditionRepository;
 import com.parser.demo.repository.WeatherPointRepository;
+import com.sun.xml.bind.v2.TODO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,9 +15,15 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Optional;
@@ -34,7 +39,6 @@ public class WeatherServiceImpl implements WeatherService {
     private WeatherConditionRepository weatherConditionRepository;
     @Autowired
     private DailyInfoRepository dailyInfoRepository;
-
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -146,30 +150,60 @@ public class WeatherServiceImpl implements WeatherService {
         }
     }
 
+    //VARIANT1: NATIVEQUERY
     @Override
-    //TODO: заменить String на Instant
+//    //TODO: заменить String на Instant
     public AvgTempResponse avgTempInCityBetweenTwoDates(String cityName, String startDate, String finalDate) {
         String q = " SELECT AVG(main_info.temp) as average, city.name " +
                 " FROM main_info" +
                 " INNER JOIN weather_point ON main_info.id = weather_point.main_info_id " +
                 " INNER JOIN city ON weather_point.city_id = city.id " +
                 "WHERE city.name= ? AND weather_point.date >= ? and weather_point.date <= ? ";
-        Query query = entityManager.createNativeQuery("SELECT AVG(main_info.temp) as avgTemp, city.name as city " +
-                " FROM main_info" +
-                " INNER JOIN weather_point ON main_info.id = weather_point.main_info_id " +
-                " INNER JOIN city ON weather_point.city_id = city.id " +
-                "WHERE city.name= ? AND weather_point.date >= ? and weather_point.date <= ? ");
+        Query query = entityManager.createNativeQuery(q);
         query.setParameter(1, cityName);
         query.setParameter(2, startDate);
         query.setParameter(3, finalDate);
         Object[] result = (Object[]) query.getSingleResult();
         AvgTempResponse avgTempResponse = new AvgTempResponse((double) result[0], (String) result[1]);
+        return avgTempResponse;
+    }
+
+    public PrecipitationResponse getSumOfPrecipitations(String city, String startDate) {
+        PrecipitationResponse response;
+
+        LocalDate localDate = LocalDate.parse(startDate);
+          localDate.minusDays(2);
+
+            response = (PrecipitationResponse) entityManager.createQuery("select new " +
+                    " com.parser.demo.dto.PrecipitationResponse(wp.city.name, SUM(wp.rainInfo.oneHour)) from WeatherPoint wp" +
+                    " where wp.city.name=:city AND wp.date>:time ")
+                    .setParameter("city", city)
+                    .setParameter("time", localDate.atStartOfDay(ZoneId.systemDefault()).toInstant())
+                    .getSingleResult();
+
+        return response;
+
+    }
+}
+
+
+
+
+
+
+    //VARIANT@: Hibernate version
+//    public AvgTempResponse avgTempInCityBetweenTwoDates(String cityName, String startDate, String finalDate) {
+//        String q = " SELECT AVG(main_info.temp) as average, city.name " +
+//                " FROM main_info" +
+//                " INNER JOIN weather_point ON main_info.id = weather_point.main_info_id " +
+//                " INNER JOIN city ON weather_point.city_id = city.id " +
+//                "WHERE city.name= ? AND weather_point.date >= ? and weather_point.date <= ? ";
 //        Connection connection = ConnectionFactory.getConnection();
 //        AvgTempResponse avgTempResponse = null;
 //        try (PreparedStatement statement = connection.prepareStatement(q)) {
 //            statement.setString(1, cityName);
-//            statement.setString(2,startDate);
-//            statement.setString(3,finalDate);
+//            statement.setString(2, startDate);
+//            statement.setString(3, finalDate);
 //            ResultSet resultSet = statement.executeQuery();
 //            while (resultSet.next()) {
 //                Double avgTemp = resultSet.getDouble("average");
@@ -178,66 +212,98 @@ public class WeatherServiceImpl implements WeatherService {
 //            }
 //        } catch (SQLException throwables) {
 //            throwables.printStackTrace();
+//
 //        }
+//        return avgTempResponse;
+//    }
+//}
+
+    //VARIANT 3: HQL query
+//    public AvgTempResponse avgTempInCityBetweenTwoDates(String q, String start, String finish) {
+//        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+//        AvgTempResponse avgTempResponse = new AvgTempResponse();
+//        try {
+//            avgTempResponse = (AvgTempResponse) entityManager.createQuery("select new com.parser.demo.dto.AvgTempResponse( avg(wp.mainInfo.temp), wp.city.name) " +
+//                    "from WeatherPoint wp " +
+//                    "where wp.city.name = :city " +
+//                    "and wp.date >= :start " +
+//                    "and wp.date <= :finish ")
+//                    .setParameter("city", q)
+//                    .setParameter("start", simpleDateFormat.parse(start).toInstant())
+//                    .setParameter("finish", simpleDateFormat.parse(finish).toInstant())
+//                    .getSingleResult();
+//        } catch (ParseException e) {
+//            e.printStackTrace();
+//        }
+//        return avgTempResponse;
+//    }
+//}
+//hql changed
+//    public AvgTempResponse avgTempInCityBetweenTwoDates(String q, String start, String finish) {
+//        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+//        AvgTempResponse avgTempResponse = new AvgTempResponse();
+//        try {
+//       avgTempResponse = (AvgTempResponse) entityManager.createQuery("select new com.parser.demo.dto.AvgTempResponse (avg(wp.mainInfo.temp), city.name)" +
+//                    "from City city " +
+//                    "join WeatherPoint wp on wp.city.id = city.id " +
+//                    "where city.name = :cityName " +
+//                    "and wp.date >= :startDate " +
+//                    "and wp.date <= :endDate ")
+//                    .setParameter("cityName", q)
+//                    .setParameter("startDate", simpleDateFormat.parse(start).toInstant())
+//                    .setParameter("endDate", simpleDateFormat.parse(finish).toInstant())
+//                    .getSingleResult();
+//        } catch (ParseException e) {
+//            e.printStackTrace();
+//        }
+//        return avgTempResponse;
+//    }
+//}
+    //hql slightly changed
+//    public AvgTempResponse avgTempInCityBetweenTwoDates(String q, String start, String finish) {
+//        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+//        AvgTempResponse avgTempResponse = new AvgTempResponse();
+//        try {
+//            avgTempResponse = (AvgTempResponse) entityManager.createQuery("select new com.parser.demo.dto.AvgTempResponse(avg(wp.mainInfo.temp), city.name)  " +
+//                    "from City city " +
+//                    "join WeatherPoint wp on wp.city.id = city.id " +
+//                    "where city.name = :cityName " +
+//                    "and wp.date >= :startDate " +
+//                    "and wp.date <= :endDate ")
+//                    .setParameter("cityName", q)
+//                    .setParameter("startDate", simpleDateFormat.parse(start).toInstant())
+//                    .setParameter("endDate", simpleDateFormat.parse(finish).toInstant())
+//                    .getSingleResult();
+//        } catch (ParseException e) {
+//            e.printStackTrace();
+//        }
+//        return avgTempResponse;
+//    }
+//}
+//TODO:chech, return null;
+//    public AvgTempResponse avgTempInCityBetweenTwoDates(String q, String start, String finish) {
+//        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+//        AvgTempResponse avgTempResponse = new AvgTempResponse();
+//        try {
+//            entityManager.createQuery("select new " + AvgTempResponse.class.getName() + "(avg(wp.mainInfo.temp), city.name)  " +
+//                    "from City city " +
+//                    "join WeatherPoint wp on wp.city.id = city.id " +
+//                    "where city.name = :cityName " +
+//                    "and wp.date >= :startDate " +
+//                    "and wp.date <= :endDate ")
+//                    .setParameter("cityName", q)
+//                    .setParameter("startDate", simpleDateFormat.parse(start).toInstant())
+//                    .setParameter("endDate", simpleDateFormat.parse(finish).toInstant())
+//
+//                    .getSingleResult();
+//
+//        } catch (ParseException e) {
+//            e.printStackTrace();
+//        }
+//        return avgTempResponse;
+//    }
+//}
 
 
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        try {
-            entityManager.createQuery("select avg(wp.mainInfo.temp), wp.city.name " +
-                    "from WeatherPoint wp " +
-                    "where wp.city.name = :cityName " +
-                    "and wp.date >= :startDate " +
-                    "and wp.date <= :endDate ")
-                    .setParameter("cityName", cityName)
-                    .setParameter("startDate", simpleDateFormat.parse(startDate).toInstant())
-                    .setParameter("endDate", simpleDateFormat.parse(finalDate).toInstant())
-                    .getSingleResult();
-
-            entityManager.createQuery("select avg(wp.mainInfo.temp), city.name " +
-                    "from City city " +
-                    "join WeatherPoint wp on wp.city.id = city.id " +
-                    "where city.name = :cityName " +
-                    "and wp.date >= :startDate " +
-                    "and wp.date <= :endDate ")
-                    .setParameter("cityName", cityName)
-                    .setParameter("startDate", simpleDateFormat.parse(startDate).toInstant())
-                    .setParameter("endDate", simpleDateFormat.parse(finalDate).toInstant())
-                    .getSingleResult();
-
-            entityManager.createQuery("select new com.parser.demo.dto.AvgTempResponse(avg(wp.mainInfo.temp), city.name)  " +
-                    "from City city " +
-                    "join WeatherPoint wp on wp.city.id = city.id " +
-                    "where city.name = :cityName " +
-                    "and wp.date >= :startDate " +
-                    "and wp.date <= :endDate ")
-                    .setParameter("cityName", cityName)
-                    .setParameter("startDate", simpleDateFormat.parse(startDate).toInstant())
-                    .setParameter("endDate", simpleDateFormat.parse(finalDate).toInstant())
-                    .getSingleResult();
-
-            entityManager.createQuery("select new " + AvgTempResponse.class.getName() + "(avg(wp.mainInfo.temp), city.name)  " +
-                    "from City city " +
-                    "join WeatherPoint wp on wp.city.id = city.id " +
-                    "where city.name = :cityName " +
-                    "and wp.date >= :startDate " +
-                    "and wp.date <= :endDate ")
-                    .setParameter("cityName", cityName)
-                    .setParameter("startDate", simpleDateFormat.parse(startDate).toInstant())
-                    .setParameter("endDate", simpleDateFormat.parse(finalDate).toInstant())
-
-                    .getSingleResult();
-
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return avgTempResponse;
-    }
-//1) Average temperature in the city between 2 dates
-//SELECT AVG(main_info.temp)
-//FROM main_info
-//         INNER JOIN weather_point ON main_info.id = weather_point.main_info_id
-//         INNER JOIN city ON weather_point.city_id = city.id
-//WHERE city.name='Milan' AND weather_point.date >= '2020-08-25' and weather_point.date <= '2020-08-26';
 
 
-}

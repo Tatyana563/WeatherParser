@@ -1,6 +1,7 @@
 package com.parser.demo;
 
 import com.parser.demo.dto.AvgTempResponse;
+import com.parser.demo.dto.PrecipitationResponse;
 import com.parser.demo.dto.WeatherResponseDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -27,19 +28,28 @@ public class WeatherController {
         HttpEntity<String> entity = new HttpEntity<String>(headers);
         String input = String.format("http://api.openweathermap.org/data/2.5/weather?q=%s&appid=%s", city, appId);
         WeatherResponseDto weatherDto = restTemplate.exchange(input, HttpMethod.GET, entity, WeatherResponseDto.class).getBody();
-       service.save(weatherDto);
+        service.save(weatherDto);
 
     }
-//http://localhost:8080//weather/findTopTemp?q=London&start=2020-08-26&finish=2020-08-28
+
+    //http://localhost:8080//weather/findTopTemp?q=London&start=2020-08-29&finish=2020-09-01
     @GetMapping("/weather/findTopTemp")
     @ResponseBody
     //TODO: заменить String на Instant
     public AvgTempResponse getForecast(@RequestParam("q") String city, @RequestParam("start") String startDate, @RequestParam("finish") String finishDate) {
         AvgTempResponse avgTempResponse = service.avgTempInCityBetweenTwoDates(city, startDate, finishDate);
         System.out.println(avgTempResponse);
-        return service.avgTempInCityBetweenTwoDates(city, startDate, finishDate);
+        return avgTempResponse;
 
 
+    }
+
+    //http://localhost:8080//weather/findSum?q=London&start=2020-09-01
+    @GetMapping("/weather/findSum")
+    @ResponseBody
+    public PrecipitationResponse getSumOfRain(@RequestParam("q") String city, @RequestParam("start") String startDate) {
+        PrecipitationResponse precResponse = service.getSumOfPrecipitations(city, startDate);
+        return precResponse;
     }
 //http://localhost:8080/weather?town=Milan
 //    @PutMapping
