@@ -10,6 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.Instant;
 import java.util.Arrays;
 
 @RestController
@@ -30,11 +31,11 @@ public class WeatherController {
        service.save(weatherDto);
 
     }
-//http://localhost:8080//weather/findTopTemp?q=London&start=2020-08-26&finish=2020-08-28
+//http://localhost:8080//weather/findTopTemp?q=London&start=2020-08-30&finish=2020-09-01
     @GetMapping("/weather/findTopTemp")
     @ResponseBody
     //TODO: заменить String на Instant
-    public AvgTempResponse getForecast(@RequestParam("q") String city, @RequestParam("start") String startDate, @RequestParam("finish") String finishDate) {
+    public AvgTempResponse getForecast(@RequestParam("q") String city, @RequestParam("start") Instant startDate, @RequestParam("finish") Instant finishDate) {
         AvgTempResponse avgTempResponse = service.avgTempInCityBetweenTwoDates(city, startDate, finishDate);
         System.out.println(avgTempResponse);
         return service.avgTempInCityBetweenTwoDates(city, startDate, finishDate);

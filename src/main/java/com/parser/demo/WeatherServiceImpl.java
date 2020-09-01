@@ -148,12 +148,7 @@ public class WeatherServiceImpl implements WeatherService {
 
     @Override
     //TODO: заменить String на Instant
-    public AvgTempResponse avgTempInCityBetweenTwoDates(String cityName, String startDate, String finalDate) {
-        String q = " SELECT AVG(main_info.temp) as average, city.name " +
-                " FROM main_info" +
-                " INNER JOIN weather_point ON main_info.id = weather_point.main_info_id " +
-                " INNER JOIN city ON weather_point.city_id = city.id " +
-                "WHERE city.name= ? AND weather_point.date >= ? and weather_point.date <= ? ";
+    public AvgTempResponse avgTempInCityBetweenTwoDates(String cityName, Instant startDate, Instant finalDate) {
         Query query = entityManager.createNativeQuery("SELECT AVG(main_info.temp) as avgTemp, city.name as city " +
                 " FROM main_info" +
                 " INNER JOIN weather_point ON main_info.id = weather_point.main_info_id " +

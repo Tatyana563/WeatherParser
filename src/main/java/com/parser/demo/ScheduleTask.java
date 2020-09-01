@@ -21,12 +21,12 @@ public class ScheduleTask {
     @Autowired
     WeatherService service;
 
-    private String city="Zagreb";
+    private String city="London";
 
     @Value("${weather.api.app-id}")
     private String appId;
 
-    @Scheduled(fixedRate = 30000)
+    @Scheduled(fixedRate = 720000)//12 minutes
     public void getWeather(){
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
