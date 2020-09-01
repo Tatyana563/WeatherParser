@@ -1,8 +1,14 @@
 package com.parser.demo;
 
-import com.parser.demo.dto.*;
+import com.parser.demo.dto.AvgTempResponse;
+import com.parser.demo.dto.CoordinatesDto;
+import com.parser.demo.dto.WeatherDto;
+import com.parser.demo.dto.WeatherResponseDto;
 import com.parser.demo.entity.*;
-import com.parser.demo.repository.*;
+import com.parser.demo.repository.CityRepository;
+import com.parser.demo.repository.DailyInfoRepository;
+import com.parser.demo.repository.WeatherConditionRepository;
+import com.parser.demo.repository.WeatherPointRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,8 +19,8 @@ import javax.persistence.Query;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
-import java.util.Date;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -28,16 +34,6 @@ public class WeatherServiceImpl implements WeatherService {
     private WeatherConditionRepository weatherConditionRepository;
     @Autowired
     private DailyInfoRepository dailyInfoRepository;
-
-    @Autowired
-    private CloudInfoRepository cloudInfoRepository;
-
-    @Autowired
-    private MainInfoRepository mainInfoRepository;
-    @Autowired
-    private RainInfoRepository rainInfoRepository;
-    @Autowired
-    private WindInfoRepository windInfoRepository;
 
 
     @PersistenceContext
@@ -91,61 +87,39 @@ public class WeatherServiceImpl implements WeatherService {
                 newDailyInfo.setSunrise(weatherDto.getSys().getSunrise());
                 newDailyInfo.setSunset(weatherDto.getSys().getSunset());
                 newDailyInfo.setTimezone(weatherDto.getTimezone());
-
                 dailyInfo = dailyInfoRepository.save(newDailyInfo);
             } else {
                 dailyInfo = bySunriseAndSunsetAndTimezone.get();
             }
 
             //Проверить на нулл
-            CloudInfo cloudInfo;
-            double cloudness = weatherDto.getClouds().getAll();
-            Optional<CloudInfo> byCloudPercentage = cloudInfoRepository.findBypercentageOfClouds(cloudness);
-            CloudInfo newCloudInfo = new CloudInfo();
-            if (byCloudPercentage.isEmpty()) {
-                newCloudInfo.setPercentageOfClouds(weatherDto.getClouds().getAll());
-                cloudInfo = cloudInfoRepository.save(newCloudInfo);
-            } else {
-                cloudInfo = byCloudPercentage.get();
+            CloudInfo cloudInfo = null;
+            if (!Objects.isNull(weatherDto.getClouds().getAll())) {
+                cloudInfo = new CloudInfo();
+                cloudInfo.setPercentageOfClouds(weatherDto.getClouds().getAll());
             }
 
 
-            MainInfo mainInfo;
-            Optional<MainInfo> byHumidityAndPressureAndTemp = mainInfoRepository.findByHumidityAndPressureAndTemp(weatherDto.getMain().getHumidity(), weatherDto.getMain().getPressure(), weatherDto.getMain().getTemp());
-            if (byHumidityAndPressureAndTemp.isEmpty()) {
-                MainInfo newMainInfo = new MainInfo();
-                newMainInfo.setHumidity(weatherDto.getMain().getHumidity());
-                newMainInfo.setPressure(weatherDto.getMain().getPressure());
-                newMainInfo.setTemp(weatherDto.getMain().getTemp());
-                mainInfo = mainInfoRepository.save(newMainInfo);
-            } else {
-                mainInfo = byHumidityAndPressureAndTemp.get();
+            MainInfo mainInfo = null;
+            if (weatherDto.getMain() != null) {
+                mainInfo = new MainInfo();
+                mainInfo.setHumidity(weatherDto.getMain().getHumidity());
+                mainInfo.setPressure(weatherDto.getMain().getPressure());
+                mainInfo.setTemp(weatherDto.getMain().getTemp());
             }
 
             RainInfo rainInfo = null;
-            Optional<RainDto> rain = Optional.ofNullable(weatherDto.getRain());
-            if (!rain.isEmpty()) {
-                Optional<RainInfo> rainFromDb = rainInfoRepository.findByOneHourAndThreeHours(weatherDto.getRain().getOneHour(), weatherDto.getRain().getThreeHours());
-                if (rainFromDb.isEmpty()) {
-                    RainInfo newRainInfo = new RainInfo();
-                    newRainInfo.setOneHour(weatherDto.getRain().getOneHour());
-                    newRainInfo.setThreeHours(weatherDto.getRain().getThreeHours());
-                    rainInfo = rainInfoRepository.save(newRainInfo);
-                } else {
-                    rainInfo = rainFromDb.get();
-                }
+            if (weatherDto.getRain() != null) {
+                rainInfo = new RainInfo();
+                rainInfo.setOneHour(weatherDto.getRain().getOneHour());
+                rainInfo.setThreeHours(weatherDto.getRain().getThreeHours());
             }
 
-            //Проверить на нулл
-            WindInfo windInfo;
-            Optional<WindInfo> byGustAndSpeed = windInfoRepository.findByGustAndSpeed(weatherDto.getWind().getGust(), weatherDto.getWind().getSpeed());
-            if (byGustAndSpeed.isEmpty()) {
-                WindInfo newWindInfo = new WindInfo();
-                newWindInfo.setGust(weatherDto.getWind().getGust());
-                newWindInfo.setSpeed(weatherDto.getWind().getSpeed());
-                windInfo = windInfoRepository.save(newWindInfo);
-            } else {
-                windInfo = byGustAndSpeed.get();
+            WindInfo windInfo = null;
+            if (weatherDto.getWind() != null) {
+                windInfo = new WindInfo();
+                windInfo.setGust(weatherDto.getWind().getGust());
+                windInfo.setSpeed(weatherDto.getWind().getSpeed());
             }
 
             point.setCity(city);
@@ -167,7 +141,7 @@ public class WeatherServiceImpl implements WeatherService {
         } else {
             System.out.println("Current weather for "
                     + weatherDto.getName() + " at "
-                    + Date.from(Instant.parse(String.valueOf(weatherDto.getDt()))) +
+                    + (weatherDto.getDt()) +
                     " has already been saved in DB");
         }
     }
