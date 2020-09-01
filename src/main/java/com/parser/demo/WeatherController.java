@@ -3,6 +3,7 @@ package com.parser.demo;
 import com.parser.demo.dto.AvgTempResponse;
 import com.parser.demo.dto.WeatherResponseDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -35,7 +36,7 @@ public class WeatherController {
     @GetMapping("/weather/findTopTemp")
     @ResponseBody
     //TODO: заменить String на Instant
-    public AvgTempResponse getForecast(@RequestParam("q") String city, @RequestParam("start") Instant startDate, @RequestParam("finish") Instant finishDate) {
+    public AvgTempResponse getForecast(@RequestParam("q") String city, @RequestParam("start") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)Instant startDate, @RequestParam("finish") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Instant finishDate) {
         AvgTempResponse avgTempResponse = service.avgTempInCityBetweenTwoDates(city, startDate, finishDate);
         System.out.println(avgTempResponse);
         return service.avgTempInCityBetweenTwoDates(city, startDate, finishDate);
