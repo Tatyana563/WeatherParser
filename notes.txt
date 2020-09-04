@@ -134,3 +134,10 @@ CREATE table products(
  select email from employee order by email asc limit 1;
  8) Find 3 last rows in a table without sorting
  SELECT * FROM employee WHERE employee.id_salary > (SELECT MAX(employee.id_salary) - 3 FROM employee)
+ 9) The second most highest salary (LIMIT n-1, n=2)
+    SELECT
+        *
+    FROM
+    employee
+    ORDER BY salary DESC
+    LIMIT 1 , 1;
