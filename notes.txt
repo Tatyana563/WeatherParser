@@ -26,7 +26,7 @@ INNER JOIN city on city.id=weather_point.city_id
 INNER JOIN rain_info on rain_info.id=weather_point.rain_info_id
 WHERE city.name='London' AND weather_point.date > (now() - interval 24 hour);
 
-4) Select top-3 cities with the highest temperature
+4) Select top-3 cities with the highest temperature (remove duplicates)
 SELECT (main_info.temp), city.name
 FROM main_info
          INNER JOIN weather_point ON main_info.id = weather_point.main_info_id
@@ -44,3 +44,93 @@ FROM (SELECT AVG(main_info.temp) avg_value FROM city, main_info
 
 
 ) as maxAvgTemp;
+
+
+Issues:
+
+-getSumOfPrecipitations (add time);
+
+-@GetMapping("/weather/findSum") - branch_1, add Instant to endpoint
+
+- remote duplicates of cities
+
+SELECT (main_info.temp), city.name
+FROM main_info
+         INNER JOIN weather_point ON main_info.id = weather_point.main_info_id
+         INNER JOIN city ON weather_point.city_id = city.id
+WHERE weather_point.date >= '2020-08-29' and weather_point.date <= '2020-09-01'
+ORDER BY main_info.temp DESC LIMIT 3;
+
+********************************************
+Different queries:
+1) a)Second highest salary
+
+   INSERT INTO employee(id_salary, salary)
+   VALUES(4,250);
+
+
+  SELECT * from employee
+
+   SELECT salary, id_salary FROM (SELECT salary, id_salary FROM employee ORDER BY salary DESC LIMIT 2) AS Emp ORDER BY salary LIMIT 1;
+   b) second lowest salary
+   SELECT id_salary, salary FROM (SELECT id_salary, salary from employee ORDER BY salary ASC LIMIT 2) as Emp ORDER BY salary DESC LIMIT 1;
+
+   2) Find duplicates:
+ CREATE TABLE IF NOT EXISTS employee
+ (
+     id_salary INT AUTO_INCREMENT PRIMARY KEY,
+     salary    INT,
+     email     VARCHAR(64)
+ );
+
+INSERT INTO employee(id_salary, salary, email)
+VALUES(4,350, 'frank@gmail.com');
+
+   SELECT e.*
+   FROM employee e
+   JOIN (SELECT salary, email, COUNT(*)
+       FROM employee GROUP BY salary, email
+       HAVING count(*)>1) b
+   ON e.salary=b.salary
+   AND e.email=b.email
+   ORDER BY e.salary
+3) Find monthly salary having year salary
+
+SELECT email, round( salary/12,2) as 'Monthly salary'
+FROM employee;
+
+
+6) The following statement finds the top three products that have the highest inventory of every product line
+CREATE table products(
+       id INT AUTO_INCREMENT PRIMARY KEY,
+       productLine VARCHAR(64),
+       productName VARCHAR(64),
+       quantityInStock int
+   )
+   INSERT INTO products(productLine,  productName,  quantityInStock )
+   VALUES('Ships', 'Queen_Alice',273);
+
+   WITH inventory
+            AS (SELECT
+                    productLine,
+                    productName,
+                    quantityInStock,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY productLine
+                        ORDER BY quantityInStock DESC) row_num
+                FROM
+                    products
+       )
+   SELECTselect email from employee order by email asc limit 1;
+       productLine,
+       productName,
+       quantityInStock
+   FROM
+       inventory
+   WHERE
+           row_num <= 2;
+
+ 7) Get the first row of the table:
+ select email from employee order by email asc limit 1;
+ 8) Find 3 last rows in a table without sorting
+ SELECT * FROM employee WHERE employee.id_salary > (SELECT MAX(employee.id_salary) - 3 FROM employee)

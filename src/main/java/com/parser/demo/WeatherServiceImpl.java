@@ -168,22 +168,25 @@ public class WeatherServiceImpl implements WeatherService {
         return avgTempResponse;
     }
 
-    public PrecipitationResponse getSumOfPrecipitations(String city, String startDate) {
+    public PrecipitationResponse getSumOfPrecipitations(String city/*, String startDate*/) {
         PrecipitationResponse response;
 
-        LocalDate localDate = LocalDate.parse(startDate);
-          localDate.minusDays(2);
+      //  LocalDate localDate = LocalDate.parse(startDate);
+     //     localDate.minusDays(3);
+     //   Instant instant = localDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
 
-            response = (PrecipitationResponse) entityManager.createQuery("select new " +
+        response = (PrecipitationResponse) entityManager.createQuery("select new " +
                     " com.parser.demo.dto.PrecipitationResponse(wp.city.name, SUM(wp.rainInfo.oneHour)) from WeatherPoint wp" +
-                    " where wp.city.name=:city AND wp.date>:time ")
+ //                   " where wp.city.name=:city AND wp.date>:time ")
+                " where wp.city.name=:city")
                     .setParameter("city", city)
-                    .setParameter("time", localDate.atStartOfDay(ZoneId.systemDefault()).toInstant())
+//                    .setParameter("time", instant)
                     .getSingleResult();
 
         return response;
 
     }
+
 }
 
 

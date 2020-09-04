@@ -47,8 +47,8 @@ public class WeatherController {
     //http://localhost:8080//weather/findSum?q=London&start=2020-09-01
     @GetMapping("/weather/findSum")
     @ResponseBody
-    public PrecipitationResponse getSumOfRain(@RequestParam("q") String city, @RequestParam("start") String startDate) {
-        PrecipitationResponse precResponse = service.getSumOfPrecipitations(city, startDate);
+    public PrecipitationResponse getSumOfRain(@RequestParam("q") String city/*, @RequestParam("start") String startDate*/) {
+        PrecipitationResponse precResponse = service.getSumOfPrecipitations(city/*, startDate*/);
         return precResponse;
     }
 //http://localhost:8080/weather?town=Milan
