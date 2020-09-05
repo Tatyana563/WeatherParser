@@ -2,7 +2,7 @@ package com.parser.demo.dto;
 
 public class PrecipitationResponse {
     String name;
-    double precipitationSum;
+    Double precipitationSum;
 
     public String getName() {
         return name;
@@ -12,15 +12,15 @@ public class PrecipitationResponse {
         this.name = name;
     }
 
-    public double getPrecipitationSum() {
+    public Double getPrecipitationSum() {
         return precipitationSum;
     }
 
-    public void setPrecipitationSum(double precipitationSum) {
+    public void setPrecipitationSum(Double precipitationSum) {
         this.precipitationSum = precipitationSum;
     }
 
-    public PrecipitationResponse(String name, double precipitationSum) {
+    public PrecipitationResponse(String name, Double precipitationSum) {
         this.name = name;
         this.precipitationSum = precipitationSum;
     }

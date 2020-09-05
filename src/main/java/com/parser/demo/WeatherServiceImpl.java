@@ -98,7 +98,7 @@ public class WeatherServiceImpl implements WeatherService {
 
             //Проверить на нулл
             CloudInfo cloudInfo = null;
-            if (!Objects.isNull(weatherDto.getClouds().getAll())) {
+            if (!Objects.isNull(weatherDto.getClouds())) {
                 cloudInfo = new CloudInfo();
                 cloudInfo.setPercentageOfClouds(weatherDto.getClouds().getAll());
             }
@@ -168,21 +168,22 @@ public class WeatherServiceImpl implements WeatherService {
         return avgTempResponse;
     }
 
-    public PrecipitationResponse getSumOfPrecipitations(String city/*, String startDate*/) {
+    public PrecipitationResponse getSumOfPrecipitations(String city, String startDate) {
         PrecipitationResponse response;
 
-      //  LocalDate localDate = LocalDate.parse(startDate);
-     //     localDate.minusDays(3);
-     //   Instant instant = localDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
+        LocalDate localDate = LocalDate.parse(startDate);
+        Instant instant = localDate.minusDays(3).atStartOfDay(ZoneId.systemDefault()).toInstant();
 
         response = (PrecipitationResponse) entityManager.createQuery("select new " +
                     " com.parser.demo.dto.PrecipitationResponse(wp.city.name, SUM(wp.rainInfo.oneHour)) from WeatherPoint wp" +
- //                   " where wp.city.name=:city AND wp.date>:time ")
-                " where wp.city.name=:city")
+                    " where wp.city.name=:city AND wp.date>:time ")
+//                " where wp.city.name=:city")
                     .setParameter("city", city)
-//                    .setParameter("time", instant)
+                    .setParameter("time", instant)
                     .getSingleResult();
-
+        if (response.getPrecipitationSum() == null) {
+            response.setPrecipitationSum(0.);
+        }
         return response;
 
     }
