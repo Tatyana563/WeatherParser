@@ -35,13 +35,10 @@ public class WeatherController {
 //http://localhost:8080//weather/findTopTemp?q=London&start=2020-08-30&finish=2020-09-01
     @GetMapping("/weather/findTopTemp")
     @ResponseBody
-    //TODO: заменить String на Instant
-    public AvgTempResponse getForecast(@RequestParam("q") String city, @RequestParam("start") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)Instant startDate, @RequestParam("finish") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Instant finishDate) {
+    public AvgTempResponse getForecast(@RequestParam("q") String city, @RequestParam("start") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Instant startDate, @RequestParam("finish") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Instant finishDate) {
         AvgTempResponse avgTempResponse = service.avgTempInCityBetweenTwoDates(city, startDate, finishDate);
         System.out.println(avgTempResponse);
         return service.avgTempInCityBetweenTwoDates(city, startDate, finishDate);
-
-
     }
 //http://localhost:8080/weather?town=Milan
 //    @PutMapping
