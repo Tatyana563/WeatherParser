@@ -50,24 +50,6 @@ public class WeatherController {
 
     }
 
-    //http://localhost:8080//weather/findTopTemp2?q=London&start=2020-08-30&finish=2020-09-06
-    @GetMapping("/weather/findTopTemp2")
-//    @ResponseBody
-    //TODO: заменить String на Instant
-    public ResponseEntity<?> getForecast2(@RequestParam("q") String city,
-                                         @RequestParam("start") Instant startDate,
-                                         @RequestParam("finish") Instant finishDate) {
-        Optional<AvgTempResponse> avgTempResponseOptional = service.avgTempInCityBetweenTwoDates(city, startDate, finishDate);
-        if(avgTempResponseOptional.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-        AvgTempResponse avgTempResponse = avgTempResponseOptional.get();
-        System.out.println(avgTempResponse);
-        return ResponseEntity.ok(avgTempResponse);
-
-
-    }
-
     //http://localhost:8080//weather/findSum?q=London&start=2020-09-04
     @GetMapping("/weather/findSum")
     @ResponseBody
