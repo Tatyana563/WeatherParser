@@ -27,4 +27,5 @@ public class PrecipitationResponse {
 
     public PrecipitationResponse() {
     }
+
 }

@@ -32,25 +32,8 @@ public class WeatherController {
        service.save(weatherDto);
 
     }
-//http://localhost:8080//weather/findTopTemp?q=London&start=2020-08-30&finish=2020-09-06
-    @GetMapping("/weather/findTopTemp")
-//    @ResponseBody
-    //TODO: заменить String на Instant
-    public ResponseEntity<?> getForecast(@RequestParam("q") String city,
-                                                      @RequestParam("start") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date startDate,
-                                                      @RequestParam("finish") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date finishDate) {
-        Optional<AvgTempResponse> avgTempResponseOptional = service.avgTempInCityBetweenTwoDates(city, startDate.toInstant(), finishDate.toInstant());
-        if(avgTempResponseOptional.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-        AvgTempResponse avgTempResponse = avgTempResponseOptional.get();
-        System.out.println(avgTempResponse);
-        return ResponseEntity.ok(avgTempResponse);
 
-
-    }
-
-    //http://localhost:8080//weather/findSum?q=London&start=2020-09-04
+    //http://localhost:8080//weather/findSum?q=London&start=2020-09-07
     @GetMapping("/weather/findSum")
     @ResponseBody
     public PrecipitationResponse getSumOfRain(@RequestParam("q") String city, @RequestParam("start") String startDate) {

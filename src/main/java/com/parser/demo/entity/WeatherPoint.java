@@ -27,14 +27,14 @@ public class WeatherPoint {
     @ManyToOne
     private City city;
 
-//    @OneToOne(cascade = CascadeType.ALL)
-//    private RainInfo rainInfo;
-//
-//    @OneToOne(cascade = CascadeType.ALL)
-//    private WindInfo windInfo;
-//
-//    @OneToOne(cascade = CascadeType.ALL)
-//    private CloudInfo cloudInfo;
+    @OneToOne(cascade = CascadeType.ALL)
+    private RainInfo rainInfo;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    private WindInfo windInfo;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    private CloudInfo cloudInfo;
 
     public int getId() {
         return id;
