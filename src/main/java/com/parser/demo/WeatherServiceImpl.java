@@ -148,7 +148,7 @@ public class WeatherServiceImpl implements WeatherService {
 
     @Override
     //TODO: заменить String на Instant
-    public AvgTempResponse avgTempInCityBetweenTwoDates(String cityName, Instant startDate, Instant finalDate) {
+    public Optional<AvgTempResponse> avgTempInCityBetweenTwoDates(String cityName, Instant startDate, Instant finalDate) {
         Query query = entityManager.createNativeQuery("SELECT AVG(main_info.temp) as avgTemp, city.name as city " +
                 " FROM main_info" +
                 " INNER JOIN weather_point ON main_info.id = weather_point.main_info_id " +
@@ -158,7 +158,10 @@ public class WeatherServiceImpl implements WeatherService {
         query.setParameter(2, startDate);
         query.setParameter(3, finalDate);
         Object[] result = (Object[]) query.getSingleResult();
-        AvgTempResponse avgTempResponse = new AvgTempResponse((double) result[0], (String) result[1]);
+        if (result[0] != null) {
+            return Optional.of(new AvgTempResponse((double) result[0], (String) result[1]));
+        }
+        return Optional.empty();
 //        Connection connection = ConnectionFactory.getConnection();
 //        AvgTempResponse avgTempResponse = null;
 //        try (PreparedStatement statement = connection.prepareStatement(q)) {
@@ -226,7 +229,7 @@ public class WeatherServiceImpl implements WeatherService {
 //            e.printStackTrace();
 //        }
 
-        return avgTempResponse;
+//        return avgTempResponse;
     }
 //1) Average temperature in the city between 2 dates
 //SELECT AVG(main_info.temp)

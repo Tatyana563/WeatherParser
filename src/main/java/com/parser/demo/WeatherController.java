@@ -4,15 +4,14 @@ import com.parser.demo.dto.AvgTempResponse;
 import com.parser.demo.dto.WeatherResponseDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.Instant;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.Optional;
 
 @RestController
 public class WeatherController {
@@ -32,13 +31,40 @@ public class WeatherController {
        service.save(weatherDto);
 
     }
-//http://localhost:8080//weather/findTopTemp?q=London&start=2020-08-30&finish=2020-09-01
+//http://localhost:8080//weather/findTopTemp?q=London&start=2020-08-30&finish=2020-09-06
     @GetMapping("/weather/findTopTemp")
-    @ResponseBody
-    public AvgTempResponse getForecast(@RequestParam("q") String city, @RequestParam("start") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Instant startDate, @RequestParam("finish") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Instant finishDate) {
-        AvgTempResponse avgTempResponse = service.avgTempInCityBetweenTwoDates(city, startDate, finishDate);
+//    @ResponseBody
+    //TODO: заменить String на Instant
+    public ResponseEntity<?> getForecast(@RequestParam("q") String city,
+                                                      @RequestParam("start") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date startDate,
+                                                      @RequestParam("finish") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date finishDate) {
+        Optional<AvgTempResponse> avgTempResponseOptional = service.avgTempInCityBetweenTwoDates(city, startDate.toInstant(), finishDate.toInstant());
+        if(avgTempResponseOptional.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        AvgTempResponse avgTempResponse = avgTempResponseOptional.get();
         System.out.println(avgTempResponse);
-        return service.avgTempInCityBetweenTwoDates(city, startDate, finishDate);
+        return ResponseEntity.ok(avgTempResponse);
+
+
+    }
+
+    //http://localhost:8080//weather/findTopTemp2?q=London&start=2020-08-30&finish=2020-09-06
+    @GetMapping("/weather/findTopTemp2")
+//    @ResponseBody
+    //TODO: заменить String на Instant
+    public ResponseEntity<?> getForecast2(@RequestParam("q") String city,
+                                         @RequestParam("start") Instant startDate,
+                                         @RequestParam("finish") Instant finishDate) {
+        Optional<AvgTempResponse> avgTempResponseOptional = service.avgTempInCityBetweenTwoDates(city, startDate, finishDate);
+        if(avgTempResponseOptional.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        AvgTempResponse avgTempResponse = avgTempResponseOptional.get();
+        System.out.println(avgTempResponse);
+        return ResponseEntity.ok(avgTempResponse);
+
+
     }
 //http://localhost:8080/weather?town=Milan
 //    @PutMapping
