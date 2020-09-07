@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.sql.Connection;
@@ -169,21 +170,26 @@ public class WeatherServiceImpl implements WeatherService {
     }
 
     public PrecipitationResponse getSumOfPrecipitations(String city, String startDate) {
-        PrecipitationResponse response;
+        PrecipitationResponse response = null;
 
         LocalDate localDate = LocalDate.parse(startDate);
         Instant instant = localDate.minusDays(3).atStartOfDay(ZoneId.systemDefault()).toInstant();
 
-        response = (PrecipitationResponse) entityManager.createQuery("select new " +
+     try {
+         response= (PrecipitationResponse) entityManager.createQuery("select new " +
                     " com.parser.demo.dto.PrecipitationResponse(wp.city.name, SUM(wp.rainInfo.oneHour)) from WeatherPoint wp" +
                     " where wp.city.name=:city AND wp.date>:time ")
 //                " where wp.city.name=:city")
                     .setParameter("city", city)
                     .setParameter("time", instant)
                     .getSingleResult();
-        if (response.getPrecipitationSum() == null) {
-            response.setPrecipitationSum(0.);
         }
+        catch (NoResultException e){
+           response=new PrecipitationResponse();
+        }
+//        if (response.getPrecipitationSum() == null) {
+//            response.setPrecipitationSum(0.);
+//        }
         return response;
 
     }
