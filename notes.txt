@@ -141,3 +141,48 @@ CREATE table products(
     employee
     ORDER BY salary DESC
     LIMIT 1 , 1;
+
+********************************************************************
+   Migration:
+
+Liquidbase:
+
+1) Pom dependency
+    <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+        </dependency>
+2) application.properties
+spring.liquibase.change-log=classpath:db/liquibase-changelog.xml
+3) In liquibase-changelog.xml include files with scripts:
+
+<databaseChangeLog
+           xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+       <include file="changelog/master.xml" relativeToChangelogFile="true"/>
+       <include file="changelog/test.xml" relativeToChangelogFile="true"/>
+   </databaseChangeLog>
+
+4)master.xml include the script:
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="1" author="Tatyna">
+        <sql>create table cloud_info
+            (
+            id                   int auto_increment
+            primary key,
+            percentage_of_clouds double not null
+            );
+
+        </sql>
+    </changeSet>
+</databaseChangeLog>
+

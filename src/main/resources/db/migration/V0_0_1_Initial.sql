@@ -5,3 +5,4 @@ create table cloud_info
     percentage_of_clouds double not null
 );
 
+-- $ mvn clean flyway:migrate -Dflyway.configFile=application.properties

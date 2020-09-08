@@ -6,11 +6,11 @@
 <!--                          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">-->
 
 <!--    <changeSet id="1" author="Tatyna">-->
-<!--        <sql>create table cloud_info-->
+<!--        <sql>create table test-->
 <!--            (-->
 <!--            id                   int auto_increment-->
 <!--            primary key,-->
-<!--            percentage_of_clouds double not null-->
+<!--            data  double not null-->
 <!--            );-->
 
 <!--        </sql>-->
