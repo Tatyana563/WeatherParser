@@ -1,0 +1,5 @@
+PROBLEMS:
+https://www.techbeamers.com/sql-query-questions-answers-for-practice/
+Q-4. Write an SQL query to print the first three characters of  FIRST_NAME from Worker table.
+Q-12. Write an SQL query to print all Worker details from the Worker table order by FIRST_NAME Ascending and DEPARTMENT Descending.
+Select * from Worker order by FIRST_NAME asc,DEPARTMENT desc;

@@ -44,3 +44,6 @@ FROM (SELECT AVG(main_info.temp) avg_value FROM city, main_info
 
 
 ) as maxAvgTemp;
+
+6) MySql with wildcards
+SELECT * from city where name LIKE 'M%' (find Milan)
