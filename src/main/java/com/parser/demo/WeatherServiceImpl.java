@@ -130,9 +130,9 @@ public class WeatherServiceImpl implements WeatherService {
             point.setCity(city);
             point.setConditions(weatherConditionSet);
             point.setDailyInfo(dailyInfo);
-           // point.setCloudInfo(cloudInfo);
+            point.setCloudInfo(cloudInfo);
             point.setMainInfo(mainInfo);
-          //  point.setRainInfo(rainInfo);
+            point.setRainInfo(rainInfo);
             point.setWindInfo(windInfo);
             point.setDate(weatherDto.getDt());
             weatherPointRepository.save(point);

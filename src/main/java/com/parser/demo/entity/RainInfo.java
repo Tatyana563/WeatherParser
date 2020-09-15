@@ -9,11 +9,11 @@ import javax.persistence.Id;
 
 @Entity
 public class RainInfo {
-@Id
-@GeneratedValue(strategy = GenerationType.IDENTITY)
-private int id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
     private double oneHour;
-    private String threeHours;
+    private double threeHours;
 
     public int getId() {
         return id;
@@ -31,11 +31,11 @@ private int id;
         this.oneHour = oneHour;
     }
 
-    public String getThreeHours() {
+    public double getThreeHours() {
         return threeHours;
     }
 
-    public void setThreeHours(String threeHours) {
+    public void setThreeHours(double threeHours) {
         this.threeHours = threeHours;
     }
 }

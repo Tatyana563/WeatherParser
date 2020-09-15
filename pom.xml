@@ -66,8 +66,8 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.liquibase</groupId>
-            <artifactId>liquibase-core</artifactId>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
         </dependency>
 
     </dependencies>
@@ -77,7 +77,11 @@
             <plugin>
                 <groupId>org.flywaydb</groupId>
                 <artifactId>flyway-maven-plugin</artifactId>
-                <version>4.0.3</version>
+                <configuration>
+                    <user>root</user>
+                    <password>Spain2020#</password>
+                    <url>jdbc:mysql://localhost:3306/weather_flyway?serverTimezone=UTC</url>
+                </configuration>
             </plugin>
         </plugins>
     </build>

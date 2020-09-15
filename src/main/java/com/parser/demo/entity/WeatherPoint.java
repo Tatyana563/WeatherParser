@@ -26,15 +26,15 @@ public class WeatherPoint {
 
     @ManyToOne
     private City city;
-//
-//    @OneToOne(cascade = CascadeType.ALL)
-//    private RainInfo rainInfo;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    private RainInfo rainInfo;
 
     @OneToOne(cascade = CascadeType.ALL)
     private WindInfo windInfo;
 
-//    @OneToOne(cascade = CascadeType.ALL)
-//    private CloudInfo cloudInfo;
+    @OneToOne(cascade = CascadeType.ALL)
+    private CloudInfo cloudInfo;
 
     public int getId() {
         return id;
@@ -85,13 +85,13 @@ public class WeatherPoint {
         this.city = city;
     }
 
-//    public RainInfo getRainInfo() {
-//        return rainInfo;
-//    }
-//
-//    public void setRainInfo(RainInfo rainInfo) {
-//        this.rainInfo = rainInfo;
-//    }
+    public RainInfo getRainInfo() {
+        return rainInfo;
+    }
+
+    public void setRainInfo(RainInfo rainInfo) {
+        this.rainInfo = rainInfo;
+    }
 
     public WindInfo getWindInfo() {
         return windInfo;
@@ -101,11 +101,11 @@ public class WeatherPoint {
         this.windInfo = windInfo;
     }
 
-//    public CloudInfo getCloudInfo() {
-//        return cloudInfo;
-//    }
-//
-//    public void setCloudInfo(CloudInfo cloudInfo) {
-//        this.cloudInfo = cloudInfo;
-//    }
+    public CloudInfo getCloudInfo() {
+        return cloudInfo;
+    }
+
+    public void setCloudInfo(CloudInfo cloudInfo) {
+        this.cloudInfo = cloudInfo;
+    }
 }

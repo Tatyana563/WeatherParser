@@ -186,3 +186,48 @@ spring.liquibase.change-log=classpath:db/liquibase-changelog.xml
     </changeSet>
 </databaseChangeLog>
 
+
+
+mvn clean flyway:migrate -Dflyway.configFile=/home/tatyana/IdeaProjects/WeatherParser/src/main/resources/application.properties
+
+
+
+create table cloud_info
+(
+    id                   int auto_increment
+        primary key,
+    percentage_of_clouds double not null
+);
+create table rain_info
+(
+    id          int auto_increment
+        primary key,
+    one_hour    varchar(255) null,
+    three_hours varchar(255) null
+);
+
+create table weather_point
+(
+    id            int auto_increment
+        primary key,
+    date          datetime(6) null,
+    city_id       int         null,
+    cloud_info_id int         null,
+    daily_info_id int         null,
+    main_info_id  int         null,
+    rain_info_id  int         null,
+    wind_info_id  int         null,
+    constraint FK2td499gx87e431m5dblg6bakb
+        foreign key (rain_info_id) references rain_info (id),
+    constraint FK4udu9uofd3v1uplf4qsoyxfhs
+        foreign key (main_info_id) references main_info (id),
+    constraint FKi69qofeijw94keerenhciitt2
+        foreign key (wind_info_id) references wind_info (id),
+    constraint FKktbfmav4pw80fcvpi7c5mocm0
+        foreign key (daily_info_id) references daily_info (id),
+    constraint FKmy9iqetrvgnwknr7by5inxbg0
+        foreign key (cloud_info_id) references cloud_info (id),
+    constraint FKt8uh84m6lx241oivi4rgsighr
+        foreign key (city_id) references city (id)
+);
+

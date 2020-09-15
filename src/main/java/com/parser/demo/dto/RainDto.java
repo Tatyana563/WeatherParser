@@ -6,7 +6,7 @@ public class RainDto {
     @JsonProperty("1h")
     private double oneHour;
     @JsonProperty("3h")
-    private String threeHours;
+    private double threeHours;
 
     public double getOneHour() {
         return oneHour;
@@ -16,15 +16,15 @@ public class RainDto {
         this.oneHour = oneHour;
     }
 
-    public String getThreeHours() {
+    public double getThreeHours() {
         return threeHours;
     }
 
-    public void setThreeHours(String threeHours) {
+    public void setThreeHours(double threeHours) {
         this.threeHours = threeHours;
     }
 
-    public RainDto(double oneHour, String threeHours) {
+    public RainDto(double oneHour, double threeHours) {
         this.oneHour = oneHour;
         this.threeHours = threeHours;
     }

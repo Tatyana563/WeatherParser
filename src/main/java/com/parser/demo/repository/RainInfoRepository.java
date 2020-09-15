@@ -6,9 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-//@Repository
-//public interface RainInfoRepository extends JpaRepository<RainInfo, Integer> {
-// Optional<RainInfo> findByOneHourAndThreeHours(String one, String three);
-//}
-//    private String oneHour;
-//    private String threeHours;
+@Repository
+public interface RainInfoRepository extends JpaRepository<RainInfo, Integer> {
+ Optional<RainInfo> findByOneHourAndThreeHours(String one, String three);
+}

@@ -34,6 +34,7 @@ public class ScheduleTask {
 
         String input = String.format("http://api.openweathermap.org/data/2.5/weather?q=%s&appid=%s", city, appId);
         WeatherResponseDto weatherDto = restTemplate.exchange(input, HttpMethod.GET, entity, WeatherResponseDto.class).getBody();
+        System.out.println(restTemplate.getForObject("https://www.w3schools.com/xml/xpath_syntax.asp", String.class));
         service.save(weatherDto);
     }
 }
